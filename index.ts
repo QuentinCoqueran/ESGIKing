@@ -15,7 +15,6 @@ async function startServer(): Promise<void> {
         }
     });
 
-
     const app = express();
 
     // ---> Déclaration est appels aux controllers
