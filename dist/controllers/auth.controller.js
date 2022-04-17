@@ -11,7 +11,7 @@ class AuthController {
     async createUser(req, res) {
         try {
             const user = await services_1.AuthService.getInstance().subscribeUser({
-                login: req.body.login,
+                login: req.body.username,
                 password: req.body.password
             });
             res.json(user);
@@ -24,10 +24,10 @@ class AuthController {
         const platform = req.headers['user-agent'] || "Unknown";
         try {
             const session = await services_1.AuthService.getInstance().logIn({
-                login: req.body.login,
+                login: req.body.username,
                 password: req.body.password
             }, platform);
-            res.json({
+            res.send({
                 token: session?._id
             });
         }

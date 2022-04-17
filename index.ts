@@ -16,7 +16,9 @@ async function startServer(): Promise<void> {
     });
 
     const app = express();
-
+    var cors = require('cors');
+    // use it before all route definitions
+    app.use(cors({origin: 'http://localhost:4200'}));
     // ---> Déclaration est appels aux controllers
     const authController = new AuthController();
     app.use('/auth', authController.buildRoutes())

@@ -17,6 +17,9 @@ async function startServer() {
         }
     });
     const app = (0, express_1.default)();
+    var cors = require('cors');
+    // use it before all route definitions
+    app.use(cors({ origin: 'http://localhost:4200' }));
     // ---> Déclaration est appels aux controllers
     const authController = new controllers_1.AuthController();
     app.use('/auth', authController.buildRoutes());
