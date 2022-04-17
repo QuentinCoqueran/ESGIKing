@@ -11,7 +11,7 @@ export class AuthController {
                 password: req.body.password
             });
             res.json(user);
-        } catch(err) {
+        } catch (err) {
             res.status(400).end();
         }
     }
@@ -20,13 +20,13 @@ export class AuthController {
         const platform = req.headers['user-agent'] || "Unknown";
         try {
             const session = await AuthService.getInstance().logIn({
-                login: req.body.login,
+                login: req.body.username,
                 password: req.body.password
             }, platform);
-            res.json({
+            res.send({
                 token: session?._id
             });
-        } catch(err) {
+        } catch (err) {
             res.status(401).end(); // unauthorized
         }
     }
