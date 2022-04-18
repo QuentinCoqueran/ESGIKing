@@ -1,5 +1,6 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
 import {SessionProps} from "./session.model";
+import {RoleProps} from "./role.model";
 
 const userSchema = new Schema({
     login: {
@@ -14,7 +15,11 @@ const userSchema = new Schema({
     sessions: [{
         type: Schema.Types.ObjectId,
         ref: "Session"
-    }]
+    }],
+    role: {
+        type: Schema.Types.ObjectId,
+        ref: "Role"
+    }
 }, {
     collection: "users",
     timestamps: true,
@@ -26,6 +31,7 @@ export interface UserProps {
     login: string;
     password: string;
     sessions: string[] | SessionProps[];
+    role: string | RoleProps;
 }
 
 export type UserDocument = UserProps & Document;
