@@ -1,4 +1,4 @@
-import {UserDocument, UserModel, UserProps} from "../models";
+import {RoleDocument, RoleModel, RoleProps, UserDocument, UserModel, UserProps} from "../models";
 import {SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models/session.model";
 import {Session} from "inspector";
@@ -8,23 +8,37 @@ export class AuthService {
     private static instance?: AuthService;
 
     public static getInstance(): AuthService {
-        if(AuthService.instance === undefined) {
+        if (AuthService.instance === undefined) {
             AuthService.instance = new AuthService();
         }
         return AuthService.instance;
     }
 
-    private constructor() { }
+    private constructor() {
+    }
 
-    public async subscribeUser(user: Partial<UserProps>): Promise<UserDocument> {
-        if(!user.password) {
+    public async subscribeUser(user: Partial<UserProps>, info: Pick<RoleProps, 'role'>, platform: string): Promise<RoleDocument> {
+        if (!user.password) {
             throw new Error('Missing password');
         }
-        const model = new UserModel({
+        const model = await UserModel.create({
             login: user.login,
-            password: SecurityUtils.sha512(user.password)
+            password: SecurityUtils.sha512(user.password),
         });
-        return model.save();
+
+
+        const role = await RoleModel.create({
+            platform,
+            user: model?._id,
+            role: info.role
+        });
+
+        model.role = role?._id
+        //update de model
+        await model.save();
+        console.log(role);
+
+        return role;
     }
 
     // Pick selectionne des champs dans le type
@@ -33,7 +47,7 @@ export class AuthService {
             login: info.login,
             password: SecurityUtils.sha512(info.password)
         }).exec();
-        if(user === null) {
+        if (user === null) {
             throw new Error('User not found');
         }
         // 604_800 -> 1 week in seconds
@@ -51,11 +65,12 @@ export class AuthService {
 
     public async getUserFrom(token: string): Promise<UserProps | null> {
         const session = await SessionModel.findOne({
-           _id: token,
-           expiration: {
-               $gte: new Date()
-           }
+            _id: token,
+            expiration: {
+                $gte: new Date()
+            }
         }).populate("user").exec();
         return session ? session.user as UserProps : null;
     }
+
 }

@@ -12,7 +12,7 @@ const roleSchema = new Schema({
         default: "customer"
     }
 }, {
-    collection: "sessions",
+    collection: "role",
     timestamps: true,
     versionKey: false
 });

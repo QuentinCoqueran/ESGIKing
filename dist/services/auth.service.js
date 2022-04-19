@@ -12,16 +12,26 @@ class AuthService {
         }
         return AuthService.instance;
     }
-    constructor() { }
-    async subscribeUser(user) {
+    constructor() {
+    }
+    async subscribeUser(user, info, platform) {
         if (!user.password) {
             throw new Error('Missing password');
         }
-        const model = new models_1.UserModel({
+        const model = await models_1.UserModel.create({
             login: user.login,
-            password: utils_1.SecurityUtils.sha512(user.password)
+            password: utils_1.SecurityUtils.sha512(user.password),
         });
-        return model.save();
+        const role = await models_1.RoleModel.create({
+            platform,
+            user: model?._id,
+            role: info.role
+        });
+        await role.save();
+        model.role = role?._id;
+        await model.save();
+        console.log(role);
+        return role;
     }
     // Pick selectionne des champs dans le type
     async logIn(info, platform) {

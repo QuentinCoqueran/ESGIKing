@@ -1,17 +1,24 @@
 import express, {Request, Response, Router} from "express";
 import {AuthService} from "../services";
 import {checkUserConnected} from "../middlewares";
+import {platform} from "os";
 
 export class AuthController {
 
     async createUser(req: Request, res: Response) {
+        const platform = req.headers['user-agent'] || "Unknown";
         try {
+            //creation table user
             const user = await AuthService.getInstance().subscribeUser({
-                login: req.body.username,
-                password: req.body.password
-            });
+                    login: req.body.username,
+                    password: req.body.password,
+                },
+                {
+                    role: req.body.role
+                }, platform);
             res.json(user);
         } catch (err) {
+            console.log(err)
             res.status(400).end();
         }
     }

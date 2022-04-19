@@ -9,14 +9,19 @@ const services_1 = require("../services");
 const middlewares_1 = require("../middlewares");
 class AuthController {
     async createUser(req, res) {
+        const platform = req.headers['user-agent'] || "Unknown";
         try {
+            //creation table user
             const user = await services_1.AuthService.getInstance().subscribeUser({
                 login: req.body.username,
-                password: req.body.password
-            });
+                password: req.body.password,
+            }, {
+                role: req.body.role
+            }, platform);
             res.json(user);
         }
         catch (err) {
+            console.log(err);
             res.status(400).end();
         }
     }
