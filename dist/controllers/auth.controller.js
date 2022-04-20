@@ -7,6 +7,7 @@ exports.AuthController = void 0;
 const express_1 = __importDefault(require("express"));
 const services_1 = require("../services");
 const middlewares_1 = require("../middlewares");
+const models_1 = require("../models");
 class AuthController {
     async createUser(req, res) {
         const platform = req.headers['user-agent'] || "Unknown";
@@ -43,11 +44,18 @@ class AuthController {
     async me(req, res) {
         res.json(req.user);
     }
+    async setRole(req, res) {
+        const roleActual = await models_1.RoleModel.findOne({
+            user: req.user?._id,
+        }).populate("user").exec();
+        res.json(roleActual?.role);
+    }
     buildRoutes() {
         const router = express_1.default.Router();
         router.post('/subscribe', express_1.default.json(), this.createUser.bind(this));
         router.post('/login', express_1.default.json(), this.logUser.bind(this));
         router.get('/me', (0, middlewares_1.checkUserConnected)(), this.me.bind(this));
+        router.get('/get-role', (0, middlewares_1.checkUserConnected)(), this.setRole.bind(this));
         return router;
     }
 }

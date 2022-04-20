@@ -36,7 +36,6 @@ export class AuthService {
         model.role = role?._id
         //update de model
         await model.save();
-        console.log(role);
 
         return role;
     }
@@ -70,6 +69,7 @@ export class AuthService {
                 $gte: new Date()
             }
         }).populate("user").exec();
+
         return session ? session.user as UserProps : null;
     }
 

@@ -1,7 +1,7 @@
 import express, {Request, Response, Router} from "express";
 import {AuthService} from "../services";
 import {checkUserConnected} from "../middlewares";
-import {platform} from "os";
+import {RoleModel, RoleProps} from "../models";
 
 export class AuthController {
 
@@ -42,11 +42,19 @@ export class AuthController {
         res.json(req.user);
     }
 
+    async setRole(req: Request, res: Response) {
+        const roleActual = await RoleModel.findOne({
+            user: req.user?._id,
+        }).populate("user").exec();
+        res.json(roleActual?.role);
+    }
+
     buildRoutes(): Router {
         const router = express.Router();
         router.post('/subscribe', express.json(), this.createUser.bind(this));
         router.post('/login', express.json(), this.logUser.bind(this));
         router.get('/me', checkUserConnected(), this.me.bind(this));
+        router.get('/get-role', checkUserConnected(), this.setRole.bind(this));
         return router;
     }
 }

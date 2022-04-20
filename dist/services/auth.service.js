@@ -27,10 +27,9 @@ class AuthService {
             user: model?._id,
             role: info.role
         });
-        await role.save();
         model.role = role?._id;
+        //update de model
         await model.save();
-        console.log(role);
         return role;
     }
     // Pick selectionne des champs dans le type
