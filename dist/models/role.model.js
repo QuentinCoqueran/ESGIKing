@@ -23,30 +23,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserModel = void 0;
+exports.RoleModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const userSchema = new mongoose_1.Schema({
-    login: {
-        type: mongoose_1.Schema.Types.String,
-        required: true,
-        unique: true
+const roleSchema = new mongoose_1.Schema({
+    user: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "User"
     },
-    password: {
-        type: mongoose_1.Schema.Types.String,
-        required: true
-    },
-    sessions: [{
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: "Session"
-        }],
     role: {
-        type: mongoose_1.Schema.Types.String,
-        ref: "Role"
+        type: String,
+        enum: ["admin", "bigboss", "customer", "cooker", "deliveryman"],
+        default: "customer"
     }
 }, {
-    collection: "users",
+    collection: "role",
     timestamps: true,
     versionKey: false
 });
-exports.UserModel = mongoose_1.default.model("User", userSchema);
-//# sourceMappingURL=user.model.js.map
+exports.RoleModel = mongoose_1.default.model("Role", roleSchema);
+//# sourceMappingURL=role.model.js.map
