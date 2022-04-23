@@ -1,5 +1,5 @@
 import { RoleDocument, RoleProps, UserProps } from "../models";
-import { SessionDocument } from "../models/session.model";
+import { SessionDocument } from "../models";
 export declare class AuthService {
     private static instance?;
     static getInstance(): AuthService;

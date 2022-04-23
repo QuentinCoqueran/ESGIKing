@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const models_1 = require("../models");
 const utils_1 = require("../utils");
-const session_model_1 = require("../models/session.model");
+const models_2 = require("../models");
 class AuthService {
     static instance;
     static getInstance() {
@@ -44,7 +44,7 @@ class AuthService {
         // 604_800 -> 1 week in seconds
         const currentDate = new Date();
         const expirationDate = new Date(currentDate.getTime() + 604_800_000);
-        const session = await session_model_1.SessionModel.create({
+        const session = await models_2.SessionModel.create({
             platform,
             expiration: expirationDate,
             user: user._id
@@ -54,7 +54,7 @@ class AuthService {
         return session;
     }
     async getUserFrom(token) {
-        const session = await session_model_1.SessionModel.findOne({
+        const session = await models_2.SessionModel.findOne({
             _id: token,
             expiration: {
                 $gte: new Date()

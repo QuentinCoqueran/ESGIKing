@@ -23,6 +23,8 @@ async function startServer() {
     // ---> Déclaration est appels aux controllers
     const authController = new controllers_1.AuthController();
     app.use('/auth', authController.buildRoutes());
+    const productController = new controllers_1.ProductsController();
+    app.use('/products', productController.buildRoutes());
     app.listen(process.env.APP_PORT, function () {
         console.log("Server listening on port : " + process.env.APP_PORT);
     });
