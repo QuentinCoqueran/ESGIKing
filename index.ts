@@ -2,7 +2,7 @@ import {config} from "dotenv";
 config();
 
 import express from 'express';
-import {AuthController} from "./controllers";
+import {AuthController, BigbossController} from "./controllers";
 import mongoose, {Mongoose} from "mongoose";
 
 async function startServer(): Promise<void> {
@@ -21,7 +21,9 @@ async function startServer(): Promise<void> {
     app.use(cors({origin: 'http://localhost:4200'}));
     // ---> Déclaration est appels aux controllers
     const authController = new AuthController();
+    const bigbossController = new BigbossController();
     app.use('/auth', authController.buildRoutes())
+    app.use('/bigboss', bigbossController.buildRoutes())
 
     app.listen(process.env.APP_PORT, function () {
         console.log("Server listening on port : " + process.env.APP_PORT);
