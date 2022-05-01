@@ -1,7 +1,7 @@
 import {RoleDocument, RoleModel, RoleProps, UserDocument, UserModel, UserProps} from "../models";
 import {SecurityUtils} from "../utils";
-import {SessionDocument, SessionModel} from "../models/session.model";
-import {Session} from "inspector";
+import {SessionDocument, SessionModel} from "../models";
+
 
 export class AuthService {
 
@@ -26,13 +26,11 @@ export class AuthService {
             password: SecurityUtils.sha512(user.password),
         });
 
-
         const role = await RoleModel.create({
             platform,
             user: model?._id,
             role: info.role
         });
-
         model.role = role?._id
         //update de model
         await model.save();
