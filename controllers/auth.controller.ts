@@ -1,7 +1,7 @@
 import express, {Request, Response, Router} from "express";
 import {AuthService} from "../services";
 import {checkUserConnected} from "../middlewares";
-import {RoleModel, RoleProps} from "../models";
+
 
 export class AuthController {
 
@@ -12,6 +12,8 @@ export class AuthController {
             const user = await AuthService.getInstance().subscribeUser({
                     login: req.body.username,
                     password: req.body.password,
+                    lastname: req.body.lastname,
+                    name: req.body.name
                 },
                 {
                     role: req.body.role
@@ -43,10 +45,20 @@ export class AuthController {
     }
 
     async setRole(req: Request, res: Response) {
-        const roleActual = await RoleModel.findOne({
-            user: req.user?._id,
-        }).populate("user").exec();
-        res.json(roleActual?.role);
+        const roleActual = await AuthService.getInstance().getRoleFrom(req.user?._id);
+        res.json(roleActual);
+    }
+
+    async authChat(req: Request, res: Response) {
+        const roleActual = await AuthService.getInstance().getRoleFrom(req.user?._id);
+        if (roleActual === "customer" || roleActual === "deliveryman") {
+            res.send({
+                is: true,
+                role: roleActual,
+                userId: req.user?._id
+            });
+        }
+        res.status(403).end();
     }
 
     buildRoutes(): Router {
@@ -55,6 +67,7 @@ export class AuthController {
         router.post('/login', express.json(), this.logUser.bind(this));
         router.get('/me', checkUserConnected(), this.me.bind(this));
         router.get('/get-role', checkUserConnected(), this.setRole.bind(this));
+        router.get('/connect-chat', checkUserConnected(), this.authChat.bind(this));
         return router;
     }
 }
