@@ -17,11 +17,5 @@ export class MenusController{
 
         }
     }
-    buildRoutes(): Router {
-        const router = express.Router();
-        router.get('/all', express.json(), this.getAll.bind(this));
-        router.get('/:id', express.json(), this.getOne.bind(this));
-        router.post('/create', express.json(), this.createProduct.bind(this));
-        return router;
-    }
+
 }

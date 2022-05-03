@@ -2,10 +2,6 @@ import mongoose, {Schema, Document, Model} from "mongoose";
 import {UserProps} from "./user.model";
 
 const roleSchema = new Schema({
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: "User"
-    },
     role: {
         type: String,
         enum: ["admin", "bigboss", "customer", "cooker", "deliveryman"],

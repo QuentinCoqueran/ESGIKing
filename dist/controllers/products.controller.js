@@ -11,7 +11,6 @@ class ProductsController {
     async createProduct(req, res) {
         const platform = req.headers["user-agent"] || "Unknown";
         const isExists = await models_1.ProductModel.exists({ name: req.body.name });
-        console.log(isExists);
         if (!isExists) {
             try {
                 const product = await services_1.ProductService.getInstance().saveProduct({
@@ -31,6 +30,7 @@ class ProductsController {
             }
         }
         else {
+            console.log("Product already exists");
             res.status(409).end();
         }
     }

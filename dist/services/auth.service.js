@@ -22,11 +22,18 @@ class AuthService {
             login: user.login,
             password: utils_1.SecurityUtils.sha512(user.password),
         });
-        const role = await models_1.RoleModel.create({
-            platform,
-            user: model?._id,
-            role: info.role
-        });
+        let role;
+        const isExists = await models_1.RoleModel.exists({ role: info.role });
+        if (!isExists) {
+            role = await models_1.RoleModel.create({
+                platform,
+                user: model?._id,
+                role: info.role
+            });
+        }
+        else {
+            role = await models_1.RoleModel.findOne({ role: info.role });
+        }
         model.role = role?._id;
         //update de model
         await model.save();
