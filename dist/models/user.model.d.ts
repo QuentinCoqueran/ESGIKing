@@ -4,6 +4,8 @@ import { RoleProps } from "./role.model";
 export interface UserProps {
     _id: string;
     login: string;
+    name: string;
+    lastname: string;
     password: string;
     sessions: string[] | SessionProps[];
     role: string | RoleProps;

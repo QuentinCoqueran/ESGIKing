@@ -23,36 +23,56 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserModel = void 0;
+exports.OrderedModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const userSchema = new mongoose_1.Schema({
-    login: {
-        type: mongoose_1.Schema.Types.String,
-        required: true,
-        unique: true
-    },
-    name: {
-        type: mongoose_1.Schema.Types.String,
-    },
-    lastname: {
-        type: mongoose_1.Schema.Types.String,
-    },
-    password: {
-        type: mongoose_1.Schema.Types.String,
+const orderedSchema = new mongoose_1.Schema({
+    client: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "User",
         required: true
     },
-    sessions: [{
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: "Session"
-        }],
-    role: {
-        type: mongoose_1.Schema.Types.String,
-        ref: "Role"
+    deliveryMan: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+    address: {
+        type: String,
+    },
+    products: [
+        {
+            product: {
+                type: mongoose_1.Schema.Types.ObjectId,
+                ref: "Product",
+            },
+            quantity: {
+                type: Number,
+            }
+        }
+    ],
+    menus: [
+        {
+            menu: {
+                type: mongoose_1.Schema.Types.ObjectId,
+                ref: "Menu",
+            },
+            quantity: {
+                type: Number,
+            }
+        }
+    ],
+    total: {
+        type: Number,
+    },
+    step: {
+        type: Number,
+        enum: [0, 1, 2, 3],
+        default: 0
     }
 }, {
-    collection: "users",
+    collection: "ordered",
     timestamps: true,
     versionKey: false
 });
-exports.UserModel = mongoose_1.default.model("User", userSchema);
-//# sourceMappingURL=user.model.js.map
+exports.OrderedModel = mongoose_1.default.model("Ordered", orderedSchema);
+//# sourceMappingURL=ordered.model.js.map

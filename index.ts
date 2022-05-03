@@ -1,31 +1,47 @@
 import {config} from "dotenv";
+
 config();
 
 import express from 'express';
-import {AuthController} from "./controllers";
+import {AuthController, OrderedController} from "./controllers";
 import mongoose, {Mongoose} from "mongoose";
+import http from "http";
 
 async function startServer(): Promise<void> {
 
     // ---> connexion à MonGo BD
     const m: Mongoose = await mongoose.connect(process.env.MONGO_URI as string, {
         auth: {
-            username: process.env.MONGO_USER  as string,
+            username: process.env.MONGO_USER as string,
             password: process.env.MONGO_PASSWORD as string
         }
     });
 
+    const port = process.env.PORT || 3000;
     const app = express();
+    const httpServer = http.createServer(app);
+    const io = require('socket.io')(httpServer, {
+        cors: {origin: 'http://localhost:4200'}
+    });
+
     var cors = require('cors');
     // use it before all route definitions
     app.use(cors({origin: 'http://localhost:4200'}));
     // ---> Déclaration est appels aux controllers
     const authController = new AuthController();
     app.use('/auth', authController.buildRoutes())
+    const orderedController = new OrderedController();
+    app.use('/ordered', orderedController.buildRoutes());
 
-    app.listen(process.env.APP_PORT, function () {
-        console.log("Server listening on port : " + process.env.APP_PORT);
+    io.on('connection', (socket: any) => {
+        socket.on('createRoom', (data: any) => {
+            socket.join(data.userId);
+        });
+        socket.on('data', (data: any) => {
+            io.sockets.in(data.userId).emit('eventToClient', {role: data.role, message: data.message});
+        });
     });
+    httpServer.listen(port, () => console.log(`Listening on port ${port}`));
 }
 
 startServer().catch(console.error);

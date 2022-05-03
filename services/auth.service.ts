@@ -2,6 +2,7 @@ import {RoleDocument, RoleModel, RoleProps, UserDocument, UserModel, UserProps} 
 import {SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models/session.model";
 import {Session} from "inspector";
+import {userInfo} from "os";
 
 export class AuthService {
 
@@ -24,8 +25,9 @@ export class AuthService {
         const model = await UserModel.create({
             login: user.login,
             password: SecurityUtils.sha512(user.password),
+            name: user.name,
+            lastname: user.lastname
         });
-
 
         const role = await RoleModel.create({
             platform,
@@ -71,6 +73,13 @@ export class AuthService {
         }).populate("user").exec();
 
         return session ? session.user as UserProps : null;
+    }
+
+    public async getRoleFrom(userId: string | undefined): Promise<string | undefined> {
+        const roleActual = await RoleModel.findOne({
+            user: userId,
+        }).populate("user").exec();
+        return roleActual?.role
     }
 
 }

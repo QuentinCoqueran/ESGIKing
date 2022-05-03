@@ -21,6 +21,8 @@ class AuthService {
         const model = await models_1.UserModel.create({
             login: user.login,
             password: utils_1.SecurityUtils.sha512(user.password),
+            name: user.name,
+            lastname: user.lastname
         });
         const role = await models_1.RoleModel.create({
             platform,
@@ -61,6 +63,12 @@ class AuthService {
             }
         }).populate("user").exec();
         return session ? session.user : null;
+    }
+    async getRoleFrom(userId) {
+        const roleActual = await models_1.RoleModel.findOne({
+            user: userId,
+        }).populate("user").exec();
+        return roleActual?.role;
     }
 }
 exports.AuthService = AuthService;

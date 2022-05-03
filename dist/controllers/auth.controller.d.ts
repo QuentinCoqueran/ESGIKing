@@ -4,5 +4,6 @@ export declare class AuthController {
     logUser(req: Request, res: Response): Promise<void>;
     me(req: Request, res: Response): Promise<void>;
     setRole(req: Request, res: Response): Promise<void>;
+    authChat(req: Request, res: Response): Promise<void>;
     buildRoutes(): Router;
 }

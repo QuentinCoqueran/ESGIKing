@@ -7,4 +7,5 @@ export declare class AuthService {
     subscribeUser(user: Partial<UserProps>, info: Pick<RoleProps, 'role'>, platform: string): Promise<RoleDocument>;
     logIn(info: Pick<UserProps, 'login' | 'password'>, platform: string): Promise<SessionDocument | null>;
     getUserFrom(token: string): Promise<UserProps | null>;
+    getRoleFrom(userId: string | undefined): Promise<string | undefined>;
 }
