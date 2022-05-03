@@ -10,21 +10,28 @@ const services_1 = require("../services");
 class ProductsController {
     async createProduct(req, res) {
         const platform = req.headers["user-agent"] || "Unknown";
-        try {
-            const product = await services_1.ProductService.getInstance().saveProduct({
-                name: req.body.name,
-                price: req.body.price,
-                description: req.body.description,
-                imageUrl: req.body.imageUrl,
-                active: req.body.active
-            }, {
-                category: req.body.category,
-            }, platform);
-            res.json(product);
+        const isExists = await models_1.ProductModel.exists({ name: req.body.name });
+        console.log(isExists);
+        if (!isExists) {
+            try {
+                const product = await services_1.ProductService.getInstance().saveProduct({
+                    name: req.body.name,
+                    price: req.body.price,
+                    description: req.body.description,
+                    imageUrl: req.body.imageUrl,
+                    active: req.body.active
+                }, {
+                    category: req.body.category,
+                }, platform);
+                res.json(product);
+            }
+            catch (err) {
+                console.log(err);
+                res.status(400).end();
+            }
         }
-        catch (err) {
-            console.log(err);
-            res.status(400).end();
+        else {
+            res.status(409).end();
         }
     }
     async getAll(req, res) {
