@@ -1,13 +1,22 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
-import {ProductProps} from "./product.model";
 import {UserProps} from "./user.model";
+import {ProductProps} from "./product.model";
 import {MenuProps} from "./menu.model";
 
-const orderSchema: Schema = new Schema({
-    user: {
+
+const orderSchema = new Schema({
+    client: {
         type: Schema.Types.ObjectId,
         ref: "User",
-        required: false
+        required: true
+    },
+    deliveryMan: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+    address: {
+        type: String,
     },
     products: [
         {
@@ -18,7 +27,7 @@ const orderSchema: Schema = new Schema({
             },
             quantity: {
                 type: Number,
-                required: true
+                 required: true
             }
         }
     ],
@@ -39,8 +48,13 @@ const orderSchema: Schema = new Schema({
         type: Number,
         required: true
     },
-    status: {
-        type: String,
+    step: {
+        type: Number,
+        enum: [0, 1, 2, 3],
+        default: 0
+    },
+    atRestaurant: {
+        type: Boolean,
         required: true
     },
     createdAt: {
@@ -52,15 +66,16 @@ const orderSchema: Schema = new Schema({
         type: Date,
         required: false
     }
-
-},{
-    collection: "orders",
+}, {
+    collection: "ordered",
     timestamps: true,
     versionKey: false
 });
 
-export interface OrderProps {
-    user: string;
+export interface OrderProps extends Document {
+    client: UserProps;
+    deliveryMan: UserProps;
+    address: string;
     products: [
         {
             product: string | ProductProps;
@@ -74,10 +89,10 @@ export interface OrderProps {
         }
     ];
     total: number;
-    status: string;
+    step: string;
     createdAt: Date;
-    updatedAt: Date
+    updatedAt: Date;
 }
 
-export type OrderDocument = Document & OrderProps;
-export const OrderModel: Model<OrderDocument> = mongoose.model<OrderDocument>("Order", orderSchema);
+export type OrderDocument = OrderProps & Document;
+export const OrderModel: Model<OrderDocument> = mongoose.model<OrderDocument>("Ordered", orderSchema);

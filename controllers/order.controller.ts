@@ -1,13 +1,13 @@
 import express, {Request, Response, Router} from "express";
-import {OrderedService} from "../services/ordered.service";
+import {OrderService} from "../services";
 import {checkUserConnected} from "../middlewares";
 
-export class OrderedController {
+export class OrderController {
 
-    async createOrdered(req: Request, res: Response) {
+    async createOrder(req: Request, res: Response) {
         const platform = req.headers['user-agent'] || "Unknown";
         try {
-            const ordered = await OrderedService.getInstance().subscribeOrdered({
+            const ordered = await OrderService.getInstance().subscribeOrdered({
                 client: req.body.clientId,
             }, platform);
             res.json(ordered);
@@ -18,20 +18,20 @@ export class OrderedController {
     }
 
     async setClientIdFromDeliveryMan(req: Request, res: Response) {
-        const orderedClient = await OrderedService.getInstance().getClientIdFromDeliveryMan(req.user?._id);
+        const orderedClient = await OrderService.getInstance().getClientIdFromDeliveryMan(req.user?._id);
         res.json(orderedClient);
     }
 
     async setOrderData(req: Request, res: Response) {
-        const ordered = await OrderedService.getInstance().getOrdered(req.body.clientId);
+        const ordered = await OrderService.getInstance().getOrdered(req.body.clientId);
         res.json(ordered);
     }
 
     buildRoutes(): Router {
         const router = express.Router();
-        router.post('/create-ordered', express.json(), this.createOrdered.bind(this));
+        router.post('/create-order', express.json(), this.createOrder.bind(this));
         router.get('/client-id', checkUserConnected(), this.setClientIdFromDeliveryMan.bind(this));
-        router.post('/data-ordered', express.json(), this.setOrderData.bind(this));
+        router.post('/data-order', express.json(), this.setOrderData.bind(this));
         return router;
     }
 }
