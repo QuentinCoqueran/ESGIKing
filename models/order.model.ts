@@ -101,4 +101,4 @@ export interface OrderProps extends Document {
 }
 
 export type OrderDocument = OrderProps & Document;
-export const OrderModel: Model<OrderDocument> = mongoose.model<OrderDocument>("Order", orderSchema);
+export const OrderModel: Model<OrderDocument> = mongoose.model<OrderDocument>("Ordered", orderSchema);

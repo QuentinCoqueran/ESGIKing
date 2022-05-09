@@ -169,24 +169,25 @@ export class OrderService {
     }
 
     public async getOrdered(clientId: string | undefined): Promise<OrderDisplay | null> {
-        let orderedDisplay = new OrderDisplay();
-        const ordered = await OrderModel.findOne({
+        console.log(clientId)
+        let orderDisplay = new OrderDisplay();
+        const order = await OrderModel.findOne({
             client: clientId,
-            or: [{step: {$ne: 3}}, {deliveryMan: null}]
+            $or: [{step: {$ne: 3}}, {deliveryMan: null}]
         });
-        if (ordered) {
+        if (order) {
             const clientActual = await UserModel.findOne({
-                _id: ordered.client,
+                _id: order.client,
             });
             if (clientActual) {
-                orderedDisplay.name = clientActual.name;
-                orderedDisplay.lastName = clientActual.lastname;
-                orderedDisplay.address = ordered.address;
-                orderedDisplay.deliverymanId = ordered.deliveryMan;
-                orderedDisplay.step = ordered.step;
+                orderDisplay.name = clientActual.name;
+                orderDisplay.lastName = clientActual.lastname;
+                orderDisplay.address = order.address;
+                orderDisplay.deliverymanId = order.deliveryMan;
+                orderDisplay.step = order.step;
             }
         }
-        return orderedDisplay;
+        return orderDisplay;
     }
 
     public async updateStep(deliveryManId: string | undefined, newStep: number | undefined): Promise<OrderDocument | null> {

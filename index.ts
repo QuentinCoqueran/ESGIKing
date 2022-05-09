@@ -3,7 +3,7 @@ import {config} from "dotenv";
 config();
 
 import express from 'express';
-import {AuthController, ProductsController, OrderController} from "./controllers";
+import {AuthController, ProductsController, OrderController, MenusController} from "./controllers";
 import mongoose, {Mongoose} from "mongoose";
 import http from "http";
 
@@ -27,6 +27,7 @@ async function startServer(): Promise<void> {
     var cors = require('cors');
     // use it before all route definitions
     app.use(cors({origin: 'http://localhost:4200'}));
+
     // ---> Déclaration est appels aux controllers
     const authController = new AuthController();
     app.use('/auth', authController.buildRoutes());
@@ -34,6 +35,8 @@ async function startServer(): Promise<void> {
     app.use('/products', productController.buildRoutes());
     const orderedController = new OrderController();
     app.use('/ordered', orderedController.buildRoutes());
+    const menuController = new MenusController();
+    app.use('/menu', menuController.buildRoutes());
 
     io.on('connection', (socket: any) => {
         socket.on('createRoom', (data: any) => {
@@ -45,5 +48,4 @@ async function startServer(): Promise<void> {
     });
     httpServer.listen(port, () => console.log(`Listening on port ${port}`));
 }
-
 startServer().catch(console.error);
