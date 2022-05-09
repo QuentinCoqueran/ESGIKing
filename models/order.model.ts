@@ -2,6 +2,7 @@ import mongoose, {Schema, Document, Model} from "mongoose";
 import {UserProps} from "./user.model";
 import {ProductProps} from "./product.model";
 import {MenuProps} from "./menu.model";
+import {SessionProps} from "./session.model";
 
 
 const orderSchema = new Schema({
@@ -18,16 +19,20 @@ const orderSchema = new Schema({
     address: {
         type: String,
     },
+    deliverymanBanned: [{
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    }],
     products: [
         {
             product: {
                 type: Schema.Types.ObjectId,
                 ref: "Product",
-                required: true
+                // required: true
             },
             quantity: {
                 type: Number,
-                 required: true
+                // required: true
             }
         }
     ],
@@ -36,17 +41,17 @@ const orderSchema = new Schema({
             menu: {
                 type: Schema.Types.ObjectId,
                 ref: "Menu",
-                required: true
+                //required: true
             },
             quantity: {
                 type: Number,
-                required: true
+                // required: true
             }
         }
     ],
     total: {
         type: Number,
-        required: true
+        //required: true
     },
     step: {
         type: Number,
@@ -55,16 +60,16 @@ const orderSchema = new Schema({
     },
     atRestaurant: {
         type: Boolean,
-        required: true
+        //required: true
     },
     createdAt: {
         type: Date,
         default: Date.now,
-        required: true
+        //required: true
     },
     endedAt: {
         type: Date,
-        required: false
+        //required: false
     }
 }, {
     collection: "orders",
@@ -89,7 +94,8 @@ export interface OrderProps extends Document {
         }
     ];
     total: number;
-    step: string;
+    step: number;
+    deliverymanBanned: string[] | UserProps[];
     createdAt: Date;
     updatedAt: Date;
 }

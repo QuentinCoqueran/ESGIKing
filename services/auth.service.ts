@@ -90,7 +90,6 @@ export class AuthService {
                 _id: actualUser.role,
             });
             if (actualRole) {
-                console.log(actualRole.role)
                 return actualRole.role;
             }
         }
