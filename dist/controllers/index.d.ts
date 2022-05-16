@@ -1,6 +1,4 @@
 export * from './auth.controller';
-<<<<<<< HEAD
 export * from './products.controller';
-=======
-export * from './ordered.controller';
->>>>>>> chat
+export * from './order.controller';
+export * from './menus.controller';

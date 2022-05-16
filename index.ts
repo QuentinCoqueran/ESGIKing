@@ -36,7 +36,7 @@ async function startServer(): Promise<void> {
     const orderedController = new OrderController();
     app.use('/order', orderedController.buildRoutes());
     const menuController = new MenusController();
-    app.use('/menu', menuController.buildRoutes());
+    app.use('/menus', menuController.buildRoutes());
 
     io.on('connection', (socket: any) => {
         socket.on('createRoom', (data: any) => {

@@ -33,7 +33,6 @@ const productSchema = new Schema({
 });
 
 export interface ProductProps {
-    _id: string;
     name: string;
     price: number;
     category?: string | ProductCategoryProps;

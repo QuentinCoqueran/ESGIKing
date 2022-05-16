@@ -1,6 +1,4 @@
 export * from './auth.service';
-<<<<<<< HEAD
 export * from './product.service';
-=======
-export * from './ordered.service';
->>>>>>> chat
+export * from './order.service';
+export * from './menu.service';

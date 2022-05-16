@@ -14,10 +14,11 @@ const menuSchema = new Schema({
         type: Number,
         required: true
     },
-    products: {
+    products: [{
         type: Schema.Types.ObjectId,
         ref: "Product",
-    },
+        required: true
+    }],
     imageUrl: {
         type: String,
         required: true
@@ -33,7 +34,6 @@ const menuSchema = new Schema({
 });
 
 export interface MenuProps{
-    _id: string;
     name: string;
     description: string;
     price: number;

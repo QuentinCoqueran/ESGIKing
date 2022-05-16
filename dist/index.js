@@ -29,14 +29,12 @@ async function startServer() {
     // ---> Déclaration est appels aux controllers
     const authController = new controllers_1.AuthController();
     app.use('/auth', authController.buildRoutes());
-<<<<<<< HEAD
     const productController = new controllers_1.ProductsController();
     app.use('/products', productController.buildRoutes());
-    app.listen(process.env.APP_PORT, function () {
-        console.log("Server listening on port : " + process.env.APP_PORT);
-=======
-    const orderedController = new controllers_1.OrderedController();
-    app.use('/ordered', orderedController.buildRoutes());
+    const orderedController = new controllers_1.OrderController();
+    app.use('/order', orderedController.buildRoutes());
+    const menuController = new controllers_1.MenusController();
+    app.use('/menus', menuController.buildRoutes());
     io.on('connection', (socket) => {
         socket.on('createRoom', (data) => {
             socket.join(data.userId);
@@ -44,7 +42,6 @@ async function startServer() {
         socket.on('data', (data) => {
             io.sockets.in(data.userId).emit('eventToClient', { role: data.role, message: data.message });
         });
->>>>>>> chat
     });
     httpServer.listen(port, () => console.log(`Listening on port ${port}`));
 }
