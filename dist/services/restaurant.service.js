@@ -24,16 +24,21 @@ class RestaurantService {
             return model;
         }
         for (let menu of menuToAdd) {
-            let menuModel = await models_1.MenuModel.findOne({ name: menu.name });
+            console.log("test1");
+            let menuModel = await models_1.MenuModel.findOne({ name: menu });
+            console.log(menuModel);
             if (menuModel) {
                 model.menuList.push(menuModel._id);
+                console.log("added");
             }
             else {
+                console.log("errOr");
                 throw new Error("Menu not found");
             }
         }
         for (let product of productToAdd) {
-            let productModel = await models_1.ProductModel.findOne({ name: product.name });
+            console.log("test2");
+            let productModel = await models_1.ProductModel.findOne({ name: product });
             if (productModel) {
                 model.productList.push(productModel._id);
             }
