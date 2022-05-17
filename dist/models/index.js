@@ -21,4 +21,5 @@ __exportStar(require("./product.model"), exports);
 __exportStar(require("./product.category.model"), exports);
 __exportStar(require("./menu.model"), exports);
 __exportStar(require("./order.model"), exports);
+__exportStar(require("./restaurant.model"), exports);
 //# sourceMappingURL=index.js.map

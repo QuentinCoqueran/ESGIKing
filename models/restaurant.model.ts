@@ -19,11 +19,13 @@ const restaurantSchema = new Schema({
     },
     menuList: [{
         type: Schema.Types.ObjectId,
-        ref: 'Menu'
+        ref: 'Menu',
+        required: true
     }],
     productList: [{
         type: Schema.Types.ObjectId,
-        ref: 'Product'
+        ref: 'Product',
+        required: true
     }],
 },
     {

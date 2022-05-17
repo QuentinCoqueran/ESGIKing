@@ -40,11 +40,13 @@ const restaurantSchema = new mongoose_1.Schema({
     },
     menuList: [{
             type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'Menu'
+            ref: 'Menu',
+            required: true
         }],
     productList: [{
             type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'Product'
+            ref: 'Product',
+            required: true
         }],
 }, {
     collection: 'restaurants',
