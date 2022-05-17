@@ -54,7 +54,7 @@ class AuthController {
         const router = express_1.default.Router();
         router.post('/subscribe', express_1.default.json(), this.createUser.bind(this));
         router.post('/login', express_1.default.json(), this.logUser.bind(this));
-        router.get('/me', (0, middlewares_1.checkUserConnected)(), this.me.bind(this));
+        router.get('/me/', (0, middlewares_1.checkUserConnected)(), this.me.bind(this));
         router.get('/get-role', (0, middlewares_1.checkUserConnected)(), this.setRole.bind(this));
         return router;
     }

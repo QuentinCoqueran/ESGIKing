@@ -1,19 +1,30 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
 import {RoleProps} from "./role.model";
+import {MenuProps} from "./menu.model";
+import {ProductProps} from "./product.model";
+
 
 const restaurantSchema = new Schema({
     name: {
         type: String,
         required: true
     },
-    latitud: {
+    latitude: {
         type: Number,
         required: true
     },
-    longitud: {
+    longitude: {
         type: Number,
         required: true
-    }
+    },
+    menuList: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Menu'
+    }],
+    productList: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
+    }],
 },
     {
         collection: 'restaurants',
@@ -22,10 +33,13 @@ const restaurantSchema = new Schema({
     }
 );
 
+
 export interface RestaurantProps{
     name: string,
-    latitud: number,
-    longitud: number
+    latitude: number,
+    longitude: number,
+    menuList: string[] | MenuProps[],
+    productList: string[] | ProductProps[]
 }
 
 export type RestaurantDocument = RestaurantProps & Document;

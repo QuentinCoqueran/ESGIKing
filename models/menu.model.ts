@@ -14,10 +14,10 @@ const menuSchema = new Schema({
         type: Number,
         required: true
     },
-    products: {
+    products: [{
         type: Schema.Types.ObjectId,
         ref: "Product",
-    },
+    }],
     imageUrl: {
         type: String,
         required: true

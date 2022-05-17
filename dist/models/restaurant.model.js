@@ -23,37 +23,33 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MenuModel = void 0;
+exports.RestaurantModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const menuSchema = new mongoose_1.Schema({
+const restaurantSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true
     },
-    description: {
-        type: String,
-        required: true
-    },
-    price: {
+    latitude: {
         type: Number,
         required: true
     },
-    products: [{
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: "Product",
-        }],
-    imageUrl: {
-        type: String,
+    longitude: {
+        type: Number,
         required: true
     },
-    active: {
-        type: Boolean,
-        default: true
-    }
+    menuList: [{
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: 'Menu'
+        }],
+    productList: [{
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: 'Product'
+        }],
 }, {
-    collection: 'menus',
+    collection: 'restaurants',
     timestamps: true,
     versionKey: false
 });
-exports.MenuModel = mongoose_1.default.model('Menu', menuSchema);
-//# sourceMappingURL=menu.model.js.map
+exports.RestaurantModel = mongoose_1.default.model("Restaurant", restaurantSchema);
+//# sourceMappingURL=restaurant.model.js.map

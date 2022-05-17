@@ -22,7 +22,9 @@ async function startServer() {
     app.use(cors({ origin: 'http://localhost:4200' }));
     // ---> Déclaration est appels aux controllers
     const authController = new controllers_1.AuthController();
+    const bigbossController = new controllers_1.BigbossController();
     app.use('/auth', authController.buildRoutes());
+    app.use('/bigboss', bigbossController.buildRoutes());
     const productController = new controllers_1.ProductsController();
     app.use('/products', productController.buildRoutes());
     app.listen(process.env.APP_PORT, function () {
