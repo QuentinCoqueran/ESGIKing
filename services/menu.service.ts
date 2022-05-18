@@ -28,7 +28,7 @@ export class MenuService {
             return model;
         }
         for (let product of info) {
-            let productModel = await this.getProductByName(product.name);
+            let productModel = await ProductModel.findOne({name: product});
             if(productModel) {
                 model.products.push(productModel._id);
             }else {
@@ -37,9 +37,5 @@ export class MenuService {
         }
         await model.save();
         return model;
-    }
-
-    public async getProductByName(name: string): Promise<ProductDocument | null> {
-        return ProductModel.findOne({name: name});
     }
 }
