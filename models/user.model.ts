@@ -10,9 +10,19 @@ const userSchema = new Schema({
     },
     name: {
         type: Schema.Types.String,
+        required: true
     },
     lastname: {
         type: Schema.Types.String,
+        required: true
+    },
+    longitude: {
+        type: Schema.Types.String,
+        default: 0
+    },
+    latitude: {
+        type: Schema.Types.String,
+        default: 0
     },
     password: {
         type: Schema.Types.String,
@@ -37,6 +47,8 @@ export interface UserProps {
     login: string;
     name: string;
     lastname: string;
+    longitude : string;
+    latitude : string;
     password: string;
     sessions: string[] | SessionProps[];
     role: string | RoleProps;

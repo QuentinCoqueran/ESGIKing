@@ -34,7 +34,7 @@ async function startServer(): Promise<void> {
     const productController = new ProductsController();
     app.use('/products', productController.buildRoutes());
     const orderedController = new OrderController();
-    app.use('/order', orderedController.buildRoutes());
+    app.use('/ordered', orderedController.buildRoutes());
     const menuController = new MenusController();
     app.use('/menus', menuController.buildRoutes());
 
