@@ -1,6 +1,6 @@
 import {ProductCategoryDocument, ProductCategoryModel, ProductCategoryProps, ProductDocument, ProductModel, ProductProps} from "../models";
 
-export class ProductService{
+export class ProductService {
 
     private static instance?: ProductService;
 
@@ -14,7 +14,7 @@ export class ProductService{
     private constructor() {
     }
 
-    public async saveProduct(product : Partial<ProductProps>, info: Pick<ProductCategoryProps, 'category'>, platform: string): Promise<ProductDocument> {
+    public async saveProduct(product: Partial<ProductProps>, info: Pick<ProductCategoryProps, 'category'>, platform: string): Promise<ProductDocument> {
         let model = await ProductModel.findOne({name: product.name,});
         if (model === null) {
             model = await ProductModel.create({
@@ -24,7 +24,7 @@ export class ProductService{
                 imageUrl: product.imageUrl,
                 active: product.active,
             });
-        }else {
+        } else {
             return model;
         }
         let categoryToAdd = await ProductCategoryModel.findOne({category: info.category});
@@ -34,10 +34,15 @@ export class ProductService{
                 category: info.category,
                 active: true,
             });
-        }else{
+        } else {
             model.category = categoryToAdd?._id;
         }
         await model.save();
         return model;
+    }
+
+    public async deleteById(toDelete: string): Promise<boolean> {
+        const productToDelete = ProductModel.deleteOne({_id: toDelete});
+        return true;
     }
 }

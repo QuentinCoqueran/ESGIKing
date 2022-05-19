@@ -38,4 +38,8 @@ export class MenuService {
         await model.save();
         return model;
     }
+    public async deleteById(toDelete: string): Promise<boolean> {
+        const menuToDelete = MenuModel.deleteOne({_id: toDelete});
+        return true;
+    }
 }

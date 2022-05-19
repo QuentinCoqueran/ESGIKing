@@ -23,7 +23,7 @@ async function startServer() {
     const io = require('socket.io')(httpServer, {
         cors: { origin: 'http://localhost:4200' }
     });
-    var cors = require('cors');
+    let cors = require('cors');
     // use it before all route definitions
     app.use(cors({ origin: 'http://localhost:4200' }));
     // ---> Déclaration est appels aux controllers
