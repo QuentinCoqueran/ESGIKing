@@ -67,7 +67,7 @@ const orderSchema = new Schema({
         required: false
     }
 }, {
-    collection: "ordered",
+    collection: "orders",
     timestamps: true,
     versionKey: false
 });
