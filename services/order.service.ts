@@ -179,12 +179,17 @@ export class OrderService {
             const clientActual = await UserModel.findOne({
                 _id: order.client,
             });
-            if (clientActual) {
+            const deliverymanActual = await UserModel.findOne({
+                _id: order.deliveryMan,
+            });
+            if (clientActual && deliverymanActual) {
                 orderDisplay.name = clientActual.name;
                 orderDisplay.lastName = clientActual.lastname;
                 orderDisplay.address = order.address;
                 orderDisplay.deliverymanId = order.deliveryMan;
                 orderDisplay.step = order.step;
+                orderDisplay.latitudeDeliveryman = deliverymanActual.latitude;
+                orderDisplay.longitudeDeliveryman = deliverymanActual.longitude;
             }
         }
         return orderDisplay;
