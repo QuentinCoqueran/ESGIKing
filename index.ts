@@ -36,6 +36,7 @@ async function startServer(): Promise<void> {
     const orderController = new OrderController();
     app.use('/ordered', orderController.buildRoutes());
     const menuController = new MenusController();
+  
     app.use('/menus', menuController.buildRoutes());
 
     io.on('connection', (socket: any) => {
