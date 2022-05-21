@@ -58,12 +58,24 @@ export class MenusController{
         }
     }
 
+    async editOne(req: Request, res : Response){
+        const isExists = await ProductModel.exists({ _id: req.params.id });
+        if(isExists) {
+
+        }else {
+            console.log("This product id doesn't exists")
+            res.sendStatus(404).end();
+        }
+    }
+
+
     buildRoutes(): Router {
         const router = express.Router();
         router.post('/create', express.json(), this.createMenu.bind(this));
         router.get('/all', express.json(), this.getAll.bind(this));
         router.get('/:id', express.json(), this.getOne.bind(this));
-        router.delete('/delete/:id', this.deleteOne.bind(this))
+        router.delete('/delete/:id', this.deleteOne.bind(this));
+        router.patch('edit/:id', this.editOne.bind(this));
         return router;
     }
 }
