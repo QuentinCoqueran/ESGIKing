@@ -8,6 +8,12 @@ const userSchema = new Schema({
         required: true,
         unique: true
     },
+    name: {
+        type: Schema.Types.String,
+    },
+    lastname: {
+        type: Schema.Types.String,
+    },
     password: {
         type: Schema.Types.String,
         required: true
@@ -17,7 +23,7 @@ const userSchema = new Schema({
         ref: "Session"
     }],
     role: {
-        type: Schema.Types.String,
+        type: Schema.Types.ObjectId,
         ref: "Role"
     }
 }, {
@@ -29,6 +35,8 @@ const userSchema = new Schema({
 export interface UserProps {
     _id: string;
     login: string;
+    name: string;
+    lastname: string;
     password: string;
     sessions: string[] | SessionProps[];
     role: string | RoleProps;

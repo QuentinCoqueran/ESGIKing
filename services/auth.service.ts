@@ -1,6 +1,8 @@
-import {RoleDocument, RoleModel, RoleProps, UserDocument, UserModel, UserProps} from "../models";
+import {ProductModel, RoleDocument, RoleModel, RoleProps, UserDocument, UserModel, UserProps} from "../models";
 import {SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models";
+import {Session} from "inspector";
+import {userInfo} from "os";
 
 
 export class AuthService {
@@ -17,24 +19,31 @@ export class AuthService {
     private constructor() {
     }
 
-    public async subscribeUser(user: Partial<UserProps>, info: Pick<RoleProps, 'role'>, platform: string): Promise<RoleDocument> {
+    public async subscribeUser(user: Partial<UserProps>, info: Pick<RoleProps, 'role'>, platform: string): Promise<RoleDocument | null> {
         if (!user.password) {
             throw new Error('Missing password');
         }
         const model = await UserModel.create({
             login: user.login,
             password: SecurityUtils.sha512(user.password),
+            name: user.name,
+            lastname: user.lastname
         });
+        let role: RoleDocument | null;
+        const isExists = await RoleModel.exists({role: info.role});
+        if (!isExists) {
+            role = await RoleModel.create({
+                platform,
+                user: model?._id,
+                role: info.role
+            });
+        } else {
+            role = await RoleModel.findOne({role: info.role});
 
-        const role = await RoleModel.create({
-            platform,
-            user: model?._id,
-            role: info.role
-        });
+        }
         model.role = role?._id
         //update de model
         await model.save();
-
         return role;
     }
 
@@ -71,6 +80,22 @@ export class AuthService {
         return session ? session.user as UserProps : null;
     }
 
+    public async getRoleFrom(userId: string | undefined): Promise<string | null> {
+        const actualUser = await UserModel.findOne({
+            _id: userId,
+        });
+
+        if (actualUser) {
+            const actualRole = await RoleModel.findOne({
+                _id: actualUser.role,
+            });
+            if (actualRole) {
+                console.log(actualRole.role)
+                return actualRole.role;
+            }
+        }
+        return null
+    }
 
 }
 

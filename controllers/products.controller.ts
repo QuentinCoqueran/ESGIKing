@@ -8,21 +8,27 @@ export class ProductsController{
 
     async createProduct(req: Request, res: Response){
         const platform = req.headers["user-agent"] || "Unknown";
-        try{
-            const product = await ProductService.getInstance().saveProduct({
-                name: req.body.name,
-                price: req.body.price,
-                description: req.body.description,
-                imageUrl: req.body.imageUrl,
-                active: req.body.active
-            },
-            {
-                category: req.body.category,
-            }, platform);
-            res.json(product);
-        }catch (err){
-            console.log(err);
-            res.status(400).end();
+        const isExists = await ProductModel.exists({ name: req.body.name });
+        if(!isExists) {
+            try {
+                const product = await ProductService.getInstance().saveProduct({
+                        name: req.body.name,
+                        price: req.body.price,
+                        description: req.body.description,
+                        imageUrl: req.body.imageUrl,
+                        active: req.body.active
+                    },
+                    {
+                        category: req.body.category,
+                    }, platform);
+                res.json(product);
+            } catch (err) {
+                console.log(err);
+                res.status(400).end();
+            }
+        } else {
+            console.log("Product already exists");
+            res.status(409).end();
         }
     }
 
