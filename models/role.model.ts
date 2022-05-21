@@ -14,7 +14,6 @@ const roleSchema = new Schema({
 });
 
 export interface RoleProps extends Document {
-    user: UserProps;
     role: string;
 }
 

@@ -35,10 +35,11 @@ async function startServer(): Promise<void> {
     app.use('/products', productController.buildRoutes());
     const bigbossController = new BigbossController();
     app.use('/bigboss', bigbossController.buildRoutes())
-    const orderedController = new OrderController();
-    app.use('/order', orderedController.buildRoutes());
+    const orderController = new OrderController();
+    app.use('/ordered', orderController.buildRoutes());
     const menuController = new MenusController();
-    app.use('/menu', menuController.buildRoutes());
+  
+    app.use('/menus', menuController.buildRoutes());
 
 
     io.on('connection', (socket: any) => {

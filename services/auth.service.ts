@@ -39,7 +39,6 @@ export class AuthService {
             });
         } else {
             role = await RoleModel.findOne({role: info.role});
-
         }
         model.role = role?._id
         //update de model
@@ -76,7 +75,6 @@ export class AuthService {
                 $gte: new Date()
             }
         }).populate("user").exec();
-
         return session ? session.user as UserProps : null;
     }
 
@@ -84,19 +82,16 @@ export class AuthService {
         const actualUser = await UserModel.findOne({
             _id: userId,
         });
-
         if (actualUser) {
             const actualRole = await RoleModel.findOne({
                 _id: actualUser.role,
             });
             if (actualRole) {
-                console.log(actualRole.role)
                 return actualRole.role;
             }
         }
         return null
     }
-
 }
 
 
