@@ -1,14 +1,6 @@
-import {
-    MenuModel,
-    MenuProps,
-    ProductCategoryModel,
-    ProductCategoryProps,
-    ProductDocument,
-    ProductModel,
-    ProductProps
-} from "../models";
+import {MenuModel, MenuProps, ProductModel, ProductProps} from "../models";
 
-import {RestaurantDocument, RestaurantModel, RestaurantProps} from "../models/restaurant.model";
+import {RestaurantDocument, RestaurantModel, RestaurantProps} from "../models";
 
 export class RestaurantService{
     private static instance?: RestaurantService;
@@ -54,5 +46,38 @@ export class RestaurantService{
         }
         await model.save();
         return model;
+    }
+
+    async deleteById(id: string): Promise<boolean> {
+        const res = await RestaurantModel.deleteOne({_id: id}).exec();
+        return res.deletedCount === 1;
+    }
+
+    async getById(id: string): Promise<RestaurantDocument | null> {
+        return RestaurantModel.findById(id).exec();
+    }
+
+    async updateById(id: string, body: any) {
+        const restaurant = await this.getById(id);
+        if(!restaurant) {
+            return null;
+        }
+        if(body.name !== undefined) {
+            restaurant.name = body.name;
+        }
+        if(body.latitude !== undefined) {
+            restaurant.latitude = body.latitude;
+        }
+        if(body.longitude !== undefined) {
+            restaurant.longitude = body.longitude;
+        }
+        if(body.menuList !== undefined) {
+            restaurant.menuList = body.menuList;
+        }
+        if(body.productList !== undefined) {
+            restaurant.productList = body.productList;
+        }
+        return await restaurant.save();
+
     }
 }

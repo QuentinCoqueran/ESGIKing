@@ -1,7 +1,7 @@
 import express, {Request, Response, Router} from "express";
 import {checkUserConnected} from "../middlewares";
-import {RestaurantService} from "../services";
-import {RestaurantModel} from "../models";
+import {AuthService, RestaurantService} from "../services";
+import {RestaurantModel, UserModel} from "../models";
 
 export class BigbossController{
 
@@ -31,9 +31,59 @@ export class BigbossController{
         }
     }
 
+    async deleteRestaurant(req: Request, res: Response){
+
+        const platform = req.headers["user-agent"] || "Unknown";
+
+        try {
+            console.log("test");
+            const restaurant = await RestaurantService.getInstance().deleteById(req.params.id);
+            if(restaurant) {
+                res.status(204).end();
+            } else {
+                res.status(404).end();
+            }
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
+    async updateRestaurant(req: Request, res: Response) {
+        const platform = req.headers["user-agent"] || "Unknown";
+
+        try {
+            const restaurant = await RestaurantService.getInstance().updateById(req.params.id, req.body);
+            if(restaurant) {
+                res.json(restaurant);
+            } else {
+                res.status(404).end();
+            }
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
+/*
+    async addAdmin(req: Request, res: Response){ // update user role to admin
+        const plateform = req.headers["user-agent"] || "Unknown";
+
+        const isExists = await UserModel.findOne({});
+        if(isExists){
+            try{
+                const admin = await AuthService.getInstance().updateById(req.params.id);
+
+                }catch (err){
+
+            }
+        }
+    }
+*/
+
     buildRoutes(): Router {
         const router = express.Router();
         router.post('/addRestaurant',express.json(), this.addRestaurant.bind(this));
+        router.delete('/deleteRestaurant/:id', this.deleteRestaurant.bind(this));
+        router.put('/updateRestaurant/:id', express.json(), this.updateRestaurant.bind(this));
         return router;
     }
 
