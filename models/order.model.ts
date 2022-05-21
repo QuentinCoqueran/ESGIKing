@@ -49,6 +49,23 @@ const orderSchema = new Schema({
             }
         }
     ],
+    message: [
+        {
+            _id: false,
+            valueMessage: {
+                type: String,
+                //required: true
+            },
+            role: {
+                type: String,
+                // required: true
+            },
+            date: {
+                type: Number,
+                // required: true
+            }
+        }
+    ],
     total: {
         type: Number,
         //required: true
@@ -91,6 +108,12 @@ export interface OrderProps extends Document {
         {
             menu: string | MenuProps;
             quantity: number
+        }
+    ];
+    message: [
+        {
+            valueMessage: string;
+            role: string;
         }
     ];
     total: number;

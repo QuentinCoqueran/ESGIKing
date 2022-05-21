@@ -169,7 +169,6 @@ export class OrderService {
     }
 
     public async getOrdered(clientId: string | undefined): Promise<OrderDisplay | null> {
-        console.log(clientId)
         let orderDisplay = new OrderDisplay();
         const order = await OrderModel.findOne({
             client: clientId,
@@ -179,19 +178,25 @@ export class OrderService {
             const clientActual = await UserModel.findOne({
                 _id: order.client,
             });
-            if (clientActual) {
+            const deliverymanActual = await UserModel.findOne({
+                _id: order.deliveryMan,
+            });
+            if (clientActual && deliverymanActual) {
                 orderDisplay.name = clientActual.name;
                 orderDisplay.lastName = clientActual.lastname;
                 orderDisplay.address = order.address;
                 orderDisplay.deliverymanId = order.deliveryMan;
                 orderDisplay.step = order.step;
+                orderDisplay.latitudeDeliveryman = deliverymanActual.latitude;
+                orderDisplay.longitudeDeliveryman = deliverymanActual.longitude;
+                orderDisplay.idOrder = order._id;
             }
         }
         return orderDisplay;
     }
 
-    public async updateStep(deliveryManId: string | undefined, newStep: number | undefined): Promise<OrderDocument | null> {
-        const filter = {deliveryMan: deliveryManId, step: 0};
+    public async updateStep(clientId: string | undefined, newStep: number | undefined): Promise<OrderDocument | null> {
+        const filter = {client: clientId, step: {$ne: 4}};
         const update = {step: newStep};
         return OrderModel.findOneAndUpdate(filter, update, {
             returnOriginal: false
@@ -210,5 +215,18 @@ export class OrderService {
         let deliverymans = await OrderService.getInstance().findDeliveryMan()
         await OrderService.getInstance().updateDeliverymanFromOrder(deliverymans, idClient);
         return newOrder;
+    }
+
+    async saveMessage(messageValue: string, orderId: string, role: string, date: number) {
+        const filter = {_id: orderId};
+        const update = {$push: {message: {valueMessage: messageValue, role: role, date: date}}};
+        const newListMessage = await OrderModel.findOneAndUpdate(filter, update, {
+            returnOriginal: false
+        }).exec();
+        if (newListMessage) {
+            return newListMessage.message;
+        } else {
+            throw new Error('No data message');
+        }
     }
 }
