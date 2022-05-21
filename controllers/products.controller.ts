@@ -1,7 +1,7 @@
 import express, {Request, Response, Router} from "express";
 import {ProductModel} from "../models";
 import {checkUserConnected} from "../middlewares";
-import {ProductService} from "../services";
+import {MenuService, ProductService} from "../services";
 
 export class ProductsController{
 
@@ -59,12 +59,29 @@ export class ProductsController{
         }
     }
 
+    async editOne(req: Request, res : Response){
+        const isExists = await ProductModel.exists({ _id: req.params.id });
+        if(isExists) {
+            try{
+                const product = await ProductService.getInstance().updateById(req.params.id, req.body);
+                res.json(product);
+            }catch(err){
+                console.log(err);
+                res.status(400).end();
+            }
+        }else {
+            console.log("This product id doesn't exists")
+            res.sendStatus(404).end();
+        }
+    }
+
     buildRoutes(): Router {
         const router = express.Router();
         router.get('/all', express.json(), this.getAll.bind(this));
         router.get('/:id', express.json(), this.getOne.bind(this));
         router.delete('/delete/:id', this.deleteOne.bind(this));
         router.post('/create', express.json(), this.createProduct.bind(this));
+        router.put('/edit/:id', express.json(),this.editOne.bind(this));
         return router;
     }
 }
