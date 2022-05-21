@@ -88,6 +88,15 @@ export class OrderController {
             res.status(403).end();
         }
     }
+    async getAllMessage(req: Request, res: Response) {
+        try {
+            const messages = await OrderService.getInstance().getAllMessage(req.body?.orderId);
+            console.log(messages)
+            res.json(messages);
+        } catch (err) {
+            res.status(403).end();
+        }
+    }
 
     buildRoutes(): Router {
         const router = express.Router();
@@ -98,6 +107,7 @@ export class OrderController {
         router.post('/take-order', express.json(), this.updateTakeOrder.bind(this));
         router.post('/finish-order', express.json(), this.finishOrder.bind(this));
         router.post('/save-message', express.json(), this.saveMessage.bind(this));
+        router.post('/get-all-message', express.json(), this.getAllMessage.bind(this));
         return router;
     }
 }
