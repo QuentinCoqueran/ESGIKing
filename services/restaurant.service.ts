@@ -72,10 +72,26 @@ export class RestaurantService{
             restaurant.longitude = body.longitude;
         }
         if(body.menuList !== undefined) {
-            restaurant.menuList = body.menuList;
+            restaurant.menuList.splice(0, restaurant.menuList.length);
+            for (let n of body.menuList) {
+                let menu = await MenuModel.findOne({name: n});
+                if (menu) {
+                    restaurant.menuList.push(menu._id);
+                } else {
+                    throw new Error("Menu not found");
+                }
+            }
         }
         if(body.productList !== undefined) {
-            restaurant.productList = body.productList;
+            restaurant.productList.splice(0, restaurant.productList.length);
+            for(let name of body.productList) {
+                let product = await ProductModel.findOne({name: name});
+                if(product) {
+                    restaurant.productList.push(product._id);
+                }else {
+                    throw new Error("Product named " + name + " not found");
+                }
+            }
         }
         return await restaurant.save();
 

@@ -2,6 +2,7 @@ import express, {Request, Response, Router} from "express";
 import {checkUserConnected} from "../middlewares";
 import {AuthService, RestaurantService} from "../services";
 import {RestaurantModel, UserModel} from "../models";
+import {AdminService} from "../services/admin.service";
 
 export class BigbossController{
 
@@ -63,27 +64,34 @@ export class BigbossController{
         }
     }
 
-/*
+
     async addAdmin(req: Request, res: Response){ // update user role to admin
         const plateform = req.headers["user-agent"] || "Unknown";
 
         const isExists = await UserModel.findOne({});
         if(isExists){
             try{
-                const admin = await AuthService.getInstance().updateById(req.params.id);
-
-                }catch (err){
-
+                const admin = await AdminService.getInstance().setRoleAdmin(req.params.id);
+                if(admin){
+                    res.json(admin);
+                }else {
+                    res.status(404).end();
+                    // go to subscribeUser
+                }
+            }catch (err){
+                console.log(err)
+                res.status(400).end();
             }
         }
     }
-*/
+
 
     buildRoutes(): Router {
         const router = express.Router();
         router.post('/addRestaurant',express.json(), this.addRestaurant.bind(this));
         router.delete('/deleteRestaurant/:id', this.deleteRestaurant.bind(this));
         router.put('/updateRestaurant/:id', express.json(), this.updateRestaurant.bind(this));
+        router.put('/addAdmin/:id', express.json(), this.addAdmin.bind(this));
         return router;
     }
 
