@@ -38,6 +38,41 @@ export class MenuService {
         await model.save();
         return model;
     }
+
+    async updateById(id: string, body: any) {
+        const menu = await MenuModel.findById(id).exec();
+        if(!menu) {
+            return null;
+        }
+        if(body.name !== undefined) {
+            menu.name = body.name;
+        }
+        if(body.description !== undefined) {
+            menu.description = body.description;
+        }
+        if(body.price !== undefined) {
+            menu.price = body.price;
+        }
+        if(body.products !== undefined) {
+            menu.products.splice(0, menu.products.length);
+            for (let product of body.products) {
+                let productModel = await ProductModel.findOne({name: product});
+                if(productModel) {
+                    menu.products.push(productModel._id);
+                }else {
+                    throw new Error("Product not found");
+                }
+            }
+        }
+        if(body.imageUrl !== undefined) {
+            menu.imageUrl = body.imageUrl;
+        }
+        if(body.active !== undefined){
+            menu.active = body.active;
+        }
+        return await menu.save();
+    }
+
     public async deleteById(toDelete: string): Promise<boolean> {
         const menuToDelete = MenuModel.deleteOne({_id: toDelete});
         return true;

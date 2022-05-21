@@ -59,11 +59,18 @@ export class MenusController{
     }
 
     async editOne(req: Request, res : Response){
-        const isExists = await ProductModel.exists({ _id: req.params.id });
+        const isExists = await MenuModel.exists({ _id: req.params.id });
         if(isExists) {
-
+            try{
+                console.log("toto");
+                const menu = await MenuService.getInstance().updateById(req.params.id, req.body);
+                res.json(menu);
+            }catch(err){
+                console.log(err);
+                res.status(400).end();
+            }
         }else {
-            console.log("This product id doesn't exists")
+            console.log("This menu id doesn't exists")
             res.sendStatus(404).end();
         }
     }
@@ -75,7 +82,7 @@ export class MenusController{
         router.get('/all', express.json(), this.getAll.bind(this));
         router.get('/:id', express.json(), this.getOne.bind(this));
         router.delete('/delete/:id', this.deleteOne.bind(this));
-        router.patch('edit/:id', this.editOne.bind(this));
+        router.put('/edit/:id', express.json(), this.editOne.bind(this));
         return router;
     }
 }
