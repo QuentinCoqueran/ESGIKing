@@ -1,4 +1,5 @@
 import {UserProps} from "./user.model";
+import {OrderProps} from "./order.model";
 
 export class OrderDisplay {
     name: string | undefined;
@@ -8,4 +9,5 @@ export class OrderDisplay {
     deliverymanId: UserProps | undefined;
     longitudeDeliveryman: string | undefined;
     latitudeDeliveryman: string | undefined;
+    idOrder: OrderProps | undefined;
 }

@@ -33,8 +33,8 @@ async function startServer(): Promise<void> {
     app.use('/auth', authController.buildRoutes());
     const productController = new ProductsController();
     app.use('/products', productController.buildRoutes());
-    const orderedController = new OrderController();
-    app.use('/ordered', orderedController.buildRoutes());
+    const orderController = new OrderController();
+    app.use('/ordered', orderController.buildRoutes());
     const menuController = new MenusController();
     app.use('/menus', menuController.buildRoutes());
 
