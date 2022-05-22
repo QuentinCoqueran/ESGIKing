@@ -32,29 +32,29 @@ export class OfferService {
         }
     }
 
-    public async saveOffer(offer: Partial<OfferProps>, restaurantToAdd: Pick<RestaurantProps, "name">, menuToAdd?: Pick<MenuProps, 'name'>[], productToAdd?: Pick<ProductProps, 'name'>[]): Promise<OfferDocument> {
-        console.log("saveOffer")
-        let model = await OfferModel.findOne({name: offer.name, restaurant: offer.restaurant});
-        if (!model) {
-            console.log("model null -> create")
-            model = await OfferModel.create({
-                name: offer.name,
-                discount: offer.discount,
-            });
-            console.log("model created")
-        } else {
-            throw new Error("Offer already exist");
-        }
+    public async saveOffer(offer: Partial<OfferProps>, menuToAdd?: Pick<MenuProps, 'name'>[], productToAdd?: Pick<ProductProps, 'name'>[]): Promise<OfferDocument> {
+        console.log("test")
+        console.log(offer);
 
-        let restaurant = await RestaurantModel.findOne({name: restaurantToAdd});
+        let restaurant = await RestaurantModel.findOne({name: offer.restaurant});
         if (restaurant) {
             console.log("restaurant found")
-            model.restaurant = restaurant._id;
         } else {
             console.log("restaurant not found")
             throw new Error("Restaurant not found");
         }
 
+        let model = await OfferModel.findOne({name: offer.name, restaurant: restaurant._id});
+        if (!model) {
+            model = await OfferModel.create({
+                name: offer.name,
+                discount: offer.discount,
+                restaurant: restaurant._id
+            });
+            console.log("model created")
+        } else {
+            throw new Error("Offer already exist");
+        }
 
         if (menuToAdd) {
             for (let menu of menuToAdd) {
@@ -80,6 +80,15 @@ export class OfferService {
         }
         return await model.save();
 
+    }
+
+    async deleteOffer(id: string): Promise<OfferDocument> {
+        let offer = await OfferModel.findById(id).exec();
+        if(!offer){
+            throw new Error("Offer not found");
+        }else{
+            return await offer.remove();
+        }
     }
 
 

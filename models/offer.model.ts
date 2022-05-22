@@ -1,4 +1,4 @@
-import mongoose, {Model, Schema} from "mongoose";
+import mongoose, {Model, Document, Schema} from "mongoose";
 
 import {MenuModel, MenuProps} from "./menu.model";
 import {ProductProps} from "./product.model";
@@ -32,7 +32,7 @@ const offerSchema = new Schema({
         versionKey: false
     });
 
-export interface OfferProps {
+export interface OfferProps extends Document{
     restaurant: string | RestaurantProps;
     name: string;
     productList: string[] | ProductProps[];

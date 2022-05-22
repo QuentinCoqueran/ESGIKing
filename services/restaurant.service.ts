@@ -1,4 +1,4 @@
-import {MenuModel, MenuProps, ProductModel, ProductProps, RoleModel, UserModel, UserProps} from "../models";
+import {MenuModel, MenuProps, OfferModel, ProductModel, ProductProps, RoleModel, UserModel, UserProps} from "../models";
 
 import {RestaurantDocument, RestaurantModel, RestaurantProps} from "../models";
 
@@ -126,6 +126,17 @@ export class RestaurantService{
                     restaurant.productList.push(product._id);
                 }else {
                     throw new Error("Product named " + name + " not found");
+                }
+            }
+        }
+        if (body.offerList !== undefined) {
+            restaurant.offerList.splice(0, restaurant.offerList.length);
+            for(let offerName of body.offerList) {
+                let offerObj = await OfferModel.findOne({name: offerName, restaurant: restaurant._id});
+                if(offerObj) {
+                    restaurant.offerList.push(offerObj._id);
+                }else {
+                    throw new Error("Offer named " + offerObj + " not found");
                 }
             }
         }
