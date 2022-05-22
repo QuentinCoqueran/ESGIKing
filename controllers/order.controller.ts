@@ -1,6 +1,7 @@
 import express, {Request, Response, Router} from "express";
 import {OrderService} from "../services";
 import {checkUserConnected} from "../middlewares";
+import {MenuModel, OrderModel} from "../models";
 
 export class OrderController {
 
@@ -9,6 +10,10 @@ export class OrderController {
         try {
             const ordered = await OrderService.getInstance().subscribeOrdered({
                 client: req.body.clientId,
+                address: req.body.address,
+                products: req.body.products,
+                menus: req.body.menus,
+                atRestaurant: req.body.atRestaurant
             }, platform);
             res.json(ordered);
         } catch (err) {
@@ -98,6 +103,18 @@ export class OrderController {
         }
     }
 
+    async getAll(req: Request, res: Response){
+        const orders = await OrderModel.find();
+        console.log(orders);
+        res.json(orders);
+    }
+
+    async getOne(req: Request, res: Response){
+        const order = await OrderModel.findById(req.params['id']);
+        console.log(order);
+        res.json(order);
+    }
+
     buildRoutes(): Router {
         const router = express.Router();
         router.post('/create-ordered', express.json(), this.createOrder.bind(this));
@@ -107,6 +124,8 @@ export class OrderController {
         router.post('/take-order', express.json(), this.updateTakeOrder.bind(this));
         router.post('/finish-order', express.json(), this.finishOrder.bind(this));
         router.post('/save-message', express.json(), this.saveMessage.bind(this));
+        router.get('/all', express.json(), this.getAll.bind(this));
+        router.get('/:id', express.json(), this.getOne.bind(this));
         router.post('/get-all-message', express.json(), this.getAllMessage.bind(this));
         return router;
     }
