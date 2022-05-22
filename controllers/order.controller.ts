@@ -16,7 +16,7 @@ export class OrderController {
                 atRestaurant: req.body.atRestaurant,
                 restaurant: req.body.restaurant
             }, platform);
-            res.json(ordered);
+            res.status(201).json(ordered);
         } catch (err) {
             console.log(err)
             res.status(400).end();

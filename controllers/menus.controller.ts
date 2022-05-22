@@ -17,7 +17,7 @@ export class MenusController{
                     active: req.body.active,
                     }, req.body.products
                 );
-                res.json(menu);
+                res.status(201).json(menu);
             }catch (err) {
                 console.log(err);
                 res.status(400).end();

@@ -20,7 +20,7 @@ export class ProductsController{
                     {
                         category: req.body.category,
                     }, platform);
-                res.json(product);
+                res.status(201).json(product);
             } catch (err) {
                 console.log(err);
                 res.status(400).end();
