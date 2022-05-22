@@ -31,8 +31,8 @@ async function startServer() {
     app.use('/auth', authController.buildRoutes());
     const productController = new controllers_1.ProductsController();
     app.use('/products', productController.buildRoutes());
-    const orderedController = new controllers_1.OrderController();
-    app.use('/order', orderedController.buildRoutes());
+    const orderController = new controllers_1.OrderController();
+    app.use('/ordered', orderController.buildRoutes());
     const menuController = new controllers_1.MenusController();
     app.use('/menus', menuController.buildRoutes());
     io.on('connection', (socket) => {

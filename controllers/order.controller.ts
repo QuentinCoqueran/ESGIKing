@@ -9,6 +9,10 @@ export class OrderController {
         try {
             const ordered = await OrderService.getInstance().subscribeOrdered({
                 client: req.body.clientId,
+                address: req.body.address,
+                products: req.body.products,
+                menus: req.body.menus,
+                atRestaurant: req.body.atRestaurant
             }, platform);
             res.json(ordered);
         } catch (err) {

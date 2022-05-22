@@ -23,34 +23,31 @@ const orderSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     }],
-    products: [
-        {
-            product: {
-                type: Schema.Types.ObjectId,
-                ref: "Product",
-                // required: true
-            },
-            quantity: {
-                type: Number,
-                // required: true
-            }
+    products: [{
+        _id: false,
+        product: {
+            type: Schema.Types.ObjectId,
+            ref: "Product",
+            // required: true
+        },
+        quantity: {
+            type: Number,
+            // required: true
         }
-    ],
-    menus: [
-        {
-            menu: {
-                type: Schema.Types.ObjectId,
-                ref: "Menu",
-                //required: true
-            },
-            quantity: {
-                type: Number,
-                // required: true
-            }
+    }],
+    menus: [{
+        _id: false,
+        menu: {
+            type: Schema.Types.ObjectId,
+            ref: "Menu",
+            //required: true
+        },
+        quantity: {
+            type: Number,
+            // required: true
         }
-    ],
-    message: [
-        {
+    }],
+    message: [{
             _id: false,
             valueMessage: {
                 type: String,
@@ -64,8 +61,7 @@ const orderSchema = new Schema({
                 type: Number,
                 // required: true
             }
-        }
-    ],
+    }],
     total: {
         type: Number,
         //required: true
@@ -98,29 +94,24 @@ export interface OrderProps extends Document {
     client: UserProps;
     deliveryMan: UserProps;
     address: string;
-    products: [
-        {
+    products: [{
             product: string | ProductProps;
             quantity: number
-        }
-    ];
-    menus: [
-        {
+    }];
+    menus: [{
             menu: string | MenuProps;
             quantity: number
-        }
-    ];
-    message: [
-        {
+    }];
+    message: [{
             valueMessage: string;
             role: string;
-        }
-    ];
+    }];
     total: number;
     step: number;
     deliverymanBanned: string[] | UserProps[];
     createdAt: Date;
     updatedAt: Date;
+    atRestaurant: boolean
 }
 
 export type OrderDocument = OrderProps & Document;

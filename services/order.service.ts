@@ -1,4 +1,4 @@
-import {RoleModel, UserModel, UserProps} from "../models";
+import {MenuModel, ProductModel, ProductProps, RoleModel, UserModel, UserProps} from "../models";
 
 import {OrderDocument, OrderModel, OrderProps} from "../models/order.model";
 import {OrderDisplay} from "../models/OrderDisplay";
@@ -31,7 +31,7 @@ export class OrderService {
                 deliverymanBanned: {$in: deliverymans[i].id},
                 step: 0,
             });
-            if (banned.length == 0) {
+            if (banned.length === 0) {
                 let sizeBanned = 0;
                 //cherche si il y a deja eu des banned pour update ou insert
                 let orderActual = await OrderModel.find({
@@ -42,7 +42,7 @@ export class OrderService {
                     sizeBanned = index.deliverymanBanned.length;
                 });
 
-                if (sizeBanned == 0) {
+                if (sizeBanned === 0) {
                     return {maj: false, idDeliveryman: deliverymans[i].id};
                 } else {
                     const filter = {client: clientId, step: 0};
@@ -67,16 +67,42 @@ export class OrderService {
         if (!ordered.client) {
             throw new Error('Missing data');
         }
-        const deliverymans = await OrderService.getInstance().findDeliveryMan()
+        let totalPrice: number = 0;
+        const deliverymans = await OrderService.getInstance().findDeliveryMan();
+        if(ordered.products){
+            for(let actual of ordered.products){
+                let productModel = await ProductModel.findOne({name: actual.product })
+                if(productModel) {
+                    actual.product = productModel._id;
+                    totalPrice += productModel.price * actual.quantity;
+                }else {
+                    throw new Error("Product not found");
+                }
+            }
+        }
+        if (ordered.menus){
+            for(let actual of ordered.menus){
+                let menuModel = await MenuModel.findOne({name: actual.menu })
+                if(menuModel) {
+                    actual.menu = menuModel._id;
+                    totalPrice += menuModel.price * actual.quantity;
+                }else {
+                    throw new Error("Menu not found");
+                }
+            }
+        }
         let result = await OrderService.getInstance().updateDeliverymanFromOrder(deliverymans, ordered.client);
         if (result) {
             if (!result.maj) {
-                return await OrderModel.create({
-                    platform,
-                    client: ordered.client,
-                    deliveryMan: result.idDeliveryman,
-                    //TODO : Modifier ajout address
-                    address: "242 Faubourg Saint-Antoine"
+                 return await OrderModel.create({
+                     platform,
+                     client: ordered.client,
+                     deliveryMan: result.idDeliveryman,
+                     address: ordered.address,
+                     menus: ordered.menus,
+                     products: ordered.products,
+                     atRestaurant: ordered.atRestaurant,
+                     total: totalPrice
                 });
             } else {
                 return null;
