@@ -1,6 +1,6 @@
 import express, {Request, Response, Router} from "express";
 import {OrderService} from "../services";
-import {checkUserConnected} from "../middlewares";
+import {checkCookerAdminConnected, checkUserConnected} from "../middlewares";
 import {MenuModel, OrderModel} from "../models";
 
 export class OrderController {
@@ -104,8 +104,8 @@ export class OrderController {
         }
     }
 
-    async getAll(req: Request, res: Response){
-        const orders = await OrderModel.find();
+    async getAllFromRestaurant(req: Request, res: Response){
+        const orders = await OrderModel.find({restaurant: req.params['id']});
         console.log(orders);
         res.json(orders);
     }
@@ -125,7 +125,7 @@ export class OrderController {
         router.post('/take-order', express.json(), this.updateTakeOrder.bind(this));
         router.post('/finish-order', express.json(), this.finishOrder.bind(this));
         router.post('/save-message', express.json(), this.saveMessage.bind(this));
-        router.get('/all', express.json(), this.getAll.bind(this));
+        router.get('/all/:id', checkCookerAdminConnected(), this.getAllFromRestaurant.bind(this));
         router.get('/:id', express.json(), this.getOne.bind(this));
         router.post('/get-all-message', express.json(), this.getAllMessage.bind(this));
         return router;

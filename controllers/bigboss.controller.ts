@@ -2,7 +2,7 @@ import express, {Request, Response, Router} from "express";
 import {checkUserConnected} from "../middlewares";
 import {AdminService, AuthService, RestaurantService} from "../services";
 import {RestaurantModel, UserModel} from "../models";
-import {checkBigbossConnected} from "../middlewares/bigboss.middleware";
+import {checkBigbossConnected} from "../middlewares";
 
 export class BigbossController{
 
