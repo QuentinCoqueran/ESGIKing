@@ -61,6 +61,8 @@ export class AuthController {
         res.status(403).end();
     }
 
+
+
     buildRoutes(): Router {
         const router = express.Router();
         router.post('/subscribe', express.json(), this.createUser.bind(this));

@@ -3,7 +3,7 @@ import {config} from "dotenv";
 config();
 
 import express from 'express';
-import {AuthController, ProductsController, OrderController, MenusController} from "./controllers";
+import {AuthController, ProductsController, OrderController, MenusController, BigbossController} from "./controllers";
 import mongoose, {Mongoose} from "mongoose";
 import http from "http";
 
@@ -33,11 +33,14 @@ async function startServer(): Promise<void> {
     app.use('/auth', authController.buildRoutes());
     const productController = new ProductsController();
     app.use('/products', productController.buildRoutes());
+    const bigbossController = new BigbossController();
+    app.use('/bigboss', bigbossController.buildRoutes())
     const orderController = new OrderController();
     app.use('/ordered', orderController.buildRoutes());
     const menuController = new MenusController();
   
     app.use('/menus', menuController.buildRoutes());
+
 
     io.on('connection', (socket: any) => {
         socket.on('createRoom', (data: any) => {

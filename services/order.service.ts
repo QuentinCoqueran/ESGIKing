@@ -255,4 +255,16 @@ export class OrderService {
             throw new Error('No data message');
         }
     }
+
+    async getAllMessage(orderId: string) {
+        const order = await OrderModel.findOne({
+            _id: orderId
+        });
+
+        if (order) {
+            return order.message;
+        } else {
+            throw new Error('No data message');
+        }
+    }
 }

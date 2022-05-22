@@ -93,6 +93,15 @@ export class OrderController {
             res.status(403).end();
         }
     }
+    async getAllMessage(req: Request, res: Response) {
+        try {
+            const messages = await OrderService.getInstance().getAllMessage(req.body?.orderId);
+            console.log(messages)
+            res.json(messages);
+        } catch (err) {
+            res.status(403).end();
+        }
+    }
 
     async getAll(req: Request, res: Response){
         const orders = await OrderModel.find();
@@ -117,6 +126,7 @@ export class OrderController {
         router.post('/save-message', express.json(), this.saveMessage.bind(this));
         router.get('/all', express.json(), this.getAll.bind(this));
         router.get('/:id', express.json(), this.getOne.bind(this));
+        router.post('/get-all-message', express.json(), this.getAllMessage.bind(this));
         return router;
     }
 }
