@@ -88,7 +88,7 @@ export class OrderController {
             const messages = await OrderService.getInstance().saveMessage(req.body?.messageValue, req.body?.orderId, req.body?.role, req.body?.date);
             res.json(messages);
         } catch (err) {
-            res.status(403).end();
+            res.status(400).end();
         }
     }
     async getAllMessage(req: Request, res: Response) {
@@ -96,7 +96,7 @@ export class OrderController {
             const messages = await OrderService.getInstance().getAllMessage(req.body?.orderId);
             res.json(messages);
         } catch (err) {
-            res.status(403).end();
+            res.status(400).end();
         }
     }
 
