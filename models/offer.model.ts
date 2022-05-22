@@ -2,20 +2,29 @@ import mongoose, {Model, Schema} from "mongoose";
 
 import {MenuModel, MenuProps} from "./menu.model";
 import {ProductProps} from "./product.model";
+import {RestaurantProps} from "./restaurant.model";
 
 const offerSchema = new Schema({
     restaurant: {
         type: Schema.Types.ObjectId,
-        ref: 'Restaurant'
+        ref: 'Restaurant',
+        required: true
     },
-    productList: [{
+    name: {
+        type: String,
+        required: true
+    },
+    productList:[{
         type: Schema.Types.ObjectId,
         ref: 'Product'
     }],
-    menuList: [{
+    menuList:[{
         type: Schema.Types.ObjectId,
         ref: 'Menu'
     }],
+    discount: {
+        type: Number, // in %
+    }
 },
     {
         collection: 'offers',
@@ -24,9 +33,11 @@ const offerSchema = new Schema({
     });
 
 export interface OfferProps {
-    restaurant: string;
+    restaurant: string | RestaurantProps;
+    name: string;
     productList: string[] | ProductProps[];
     menuList: string[] | MenuProps[];
+    discount: number;
 }
 
 export type OfferDocument = OfferProps & Document;
