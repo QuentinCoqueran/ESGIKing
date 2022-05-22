@@ -1,8 +1,8 @@
 import express, {Request, Response, Router} from "express";
 import {checkUserConnected} from "../middlewares";
-import {AuthService, RestaurantService} from "../services";
+import {AdminService, AuthService, RestaurantService} from "../services";
 import {RestaurantModel, UserModel} from "../models";
-import {AdminService} from "../services/admin.service";
+import {checkBigbossConnected} from "../middlewares/bigboss.middleware";
 
 export class BigbossController{
 
@@ -10,8 +10,17 @@ export class BigbossController{
         res.json(req.user);
     }
 
+    async getAllRestaurants(req: Request, res: Response){
+        try {
+            const restaurants = await RestaurantService.getInstance().getAllRestaurants();
+            res.json(restaurants);
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
     async addRestaurant(req: Request, res: Response){
-        console.log("log");
+
         const platform = req.headers["user-agent"] || "Unknown";
 
         const isExists = await RestaurantModel.findOne({latitude: req.body.latitude, longitude: req.body.longitude});
@@ -21,9 +30,11 @@ export class BigbossController{
                     name: req.body.name,
                     latitude: req.body.latitude,
                     longitude: req.body.longitude,
+                    admin: req.body.admin
                 }, req.body.menuList, req.body.productList);
                 res.json(restaurant);
             }catch (err){
+                console.log(err);
                 res.status(400).end();
             }
         }else{
@@ -79,19 +90,36 @@ export class BigbossController{
                     // go to subscribeUser
                 }
             }catch (err){
-                console.log(err)
                 res.status(400).end();
             }
+        }
+    }
+
+    async deleteAdmin(req: Request, res: Response){
+        const plateform = req.headers["user-agent"] || "Unknown";
+
+        try {
+            const admin = await AdminService.getInstance().deleteAdmin(req.params.id);
+            if(admin){
+                res.status(204).end();
+            }else {
+                res.status(404).end();
+            }
+        } catch(err) {
+            res.status(400).end();
         }
     }
 
 
     buildRoutes(): Router {
         const router = express.Router();
-        router.post('/addRestaurant',express.json(), this.addRestaurant.bind(this));
-        router.delete('/deleteRestaurant/:id', this.deleteRestaurant.bind(this));
-        router.put('/updateRestaurant/:id', express.json(), this.updateRestaurant.bind(this));
-        router.put('/addAdmin/:id', express.json(), this.addAdmin.bind(this));
+        router.get("/", checkBigbossConnected(), this.bigboss);
+        router.get("/allRestaurants", checkBigbossConnected(), this.getAllRestaurants.bind(this));
+        router.post('/addRestaurant', checkBigbossConnected(), express.json(), this.addRestaurant.bind(this));
+        router.delete('/deleteRestaurant/:id', checkBigbossConnected(),this.deleteRestaurant.bind(this));
+        router.put('/updateRestaurant/:id', checkBigbossConnected(), express.json(), this.updateRestaurant.bind(this));
+        router.put('/addAdmin/:id', checkBigbossConnected(), express.json(), this.addAdmin.bind(this));
+        router.delete('/deleteAdmin/:id', checkBigbossConnected(), this.deleteAdmin.bind(this));
         return router;
     }
 

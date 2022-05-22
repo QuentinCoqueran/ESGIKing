@@ -20,6 +20,9 @@ export class AuthService {
     }
 
     public async subscribeUser(user: Partial<UserProps>, info: Pick<RoleProps, 'role'>, platform: string): Promise<RoleDocument | null> {
+        if(info.role != "admin" && info.role != "bigboss" && info.role != "customer" && info.role != "cooker" && info.role != "deliveryman"){
+            throw new Error("Role not found");
+        }
         if (!user.password) {
             throw new Error('Missing password');
         }
@@ -34,11 +37,11 @@ export class AuthService {
         if (!isExists) {
             role = await RoleModel.create({
                 platform,
-                user: model?._id,
                 role: info.role
             });
         } else {
             role = await RoleModel.findOne({role: info.role});
+
         }
         model.role = role?._id
         //update de model
@@ -75,6 +78,7 @@ export class AuthService {
                 $gte: new Date()
             }
         }).populate("user").exec();
+
         return session ? session.user as UserProps : null;
     }
 
@@ -82,16 +86,19 @@ export class AuthService {
         const actualUser = await UserModel.findOne({
             _id: userId,
         });
+
         if (actualUser) {
             const actualRole = await RoleModel.findOne({
                 _id: actualUser.role,
             });
             if (actualRole) {
+                console.log(actualRole.role)
                 return actualRole.role;
             }
         }
         return null
     }
+
 }
 
 

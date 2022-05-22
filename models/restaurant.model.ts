@@ -2,6 +2,7 @@ import mongoose, {Schema, Document, Model} from "mongoose";
 import {RoleProps} from "./role.model";
 import {MenuProps} from "./menu.model";
 import {ProductProps} from "./product.model";
+import {UserProps} from "./user.model";
 
 
 const restaurantSchema = new Schema({
@@ -27,6 +28,11 @@ const restaurantSchema = new Schema({
         ref: 'Product',
         required: true
     }],
+    admin: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }
 },
     {
         collection: 'restaurants',
@@ -41,7 +47,8 @@ export interface RestaurantProps{
     latitude: number,
     longitude: number,
     menuList: string[] | MenuProps[],
-    productList: string[] | ProductProps[]
+    productList: string[] | ProductProps[],
+    admin: string | UserProps
 }
 
 export type RestaurantDocument = RestaurantProps & Document;
