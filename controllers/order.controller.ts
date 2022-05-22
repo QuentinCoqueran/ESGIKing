@@ -13,7 +13,8 @@ export class OrderController {
                 address: req.body.address,
                 products: req.body.products,
                 menus: req.body.menus,
-                atRestaurant: req.body.atRestaurant
+                atRestaurant: req.body.atRestaurant,
+                restaurant: req.body.restaurant
             }, platform);
             res.json(ordered);
         } catch (err) {

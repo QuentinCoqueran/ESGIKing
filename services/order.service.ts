@@ -102,6 +102,7 @@ export class OrderService {
                      menus: ordered.menus,
                      products: ordered.products,
                      atRestaurant: ordered.atRestaurant,
+                     restaurant: ordered.restaurant,
                      total: totalPrice
                 });
             } else {

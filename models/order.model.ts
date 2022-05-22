@@ -84,6 +84,11 @@ const orderSchema = new Schema({
     endedAt: {
         type: Date,
         //required: false
+    },
+    restaurant: {
+        type: Schema.Types.ObjectId,
+        ref: "Restaurant",
+        required: true
     }
 }, {
     collection: "orders",
@@ -113,6 +118,7 @@ export interface OrderProps extends Document {
     createdAt: Date;
     updatedAt: Date;
     atRestaurant: boolean
+    restaurant: string
 }
 
 export type OrderDocument = OrderProps & Document;
