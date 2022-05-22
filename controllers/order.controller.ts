@@ -33,7 +33,6 @@ export class OrderController {
 
     async setOrderData(req: Request, res: Response) {
         try {
-
             const ordered = await OrderService.getInstance().getOrdered(req.body?.clientId);
             res.json(ordered);
         } catch (err) {
@@ -79,10 +78,8 @@ export class OrderController {
     }
 
     async saveMessage(req: Request, res: Response) {
-        console.log(req.body)
         try {
             const messages = await OrderService.getInstance().saveMessage(req.body?.messageValue, req.body?.orderId, req.body?.role, req.body?.date);
-            console.log(messages)
             res.json(messages);
         } catch (err) {
             res.status(403).end();
@@ -91,7 +88,6 @@ export class OrderController {
     async getAllMessage(req: Request, res: Response) {
         try {
             const messages = await OrderService.getInstance().getAllMessage(req.body?.orderId);
-            console.log(messages)
             res.json(messages);
         } catch (err) {
             res.status(403).end();

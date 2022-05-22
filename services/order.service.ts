@@ -31,7 +31,7 @@ export class OrderService {
                 deliverymanBanned: {$in: deliverymans[i].id},
                 step: 0,
             });
-            if (banned.length == 0) {
+            if (banned.length === 0) {
                 let sizeBanned = 0;
                 //cherche si il y a deja eu des banned pour update ou insert
                 let orderActual = await OrderModel.find({
@@ -174,6 +174,7 @@ export class OrderService {
             client: clientId,
             $or: [{step: {$ne: 3}}, {deliveryMan: null}]
         });
+        console.log(order)
         if (order) {
             const clientActual = await UserModel.findOne({
                 _id: order.client,
@@ -181,16 +182,18 @@ export class OrderService {
             const deliverymanActual = await UserModel.findOne({
                 _id: order.deliveryMan,
             });
-            if (clientActual && deliverymanActual) {
+            if (clientActual) {
                 orderDisplay.name = clientActual.name;
                 orderDisplay.lastName = clientActual.lastname;
-                orderDisplay.address = order.address;
-                orderDisplay.deliverymanId = order.deliveryMan;
-                orderDisplay.step = order.step;
+            }
+            if (deliverymanActual) {
                 orderDisplay.latitudeDeliveryman = deliverymanActual.latitude;
                 orderDisplay.longitudeDeliveryman = deliverymanActual.longitude;
-                orderDisplay.idOrder = order._id;
             }
+            orderDisplay.address = order.address;
+            orderDisplay.deliverymanId = order.deliveryMan;
+            orderDisplay.step = order.step;
+            orderDisplay.idOrder = order._id;
         }
         return orderDisplay;
     }
