@@ -39,8 +39,14 @@ export class ProductsController{
 
     async getOne(req: Request, res: Response){
         const product = await ProductModel.findById(req.params['id']);
+        if(product){
+            res.json(product);
+
+        }else {
+            console.log("This product id doesn't exists")
+            res.sendStatus(404).end();
+        }
         console.log(product);
-        res.json(product);
     }
 
     async deleteOne(req: Request, res: Response){
