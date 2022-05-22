@@ -8,7 +8,7 @@ declare module 'express' {
     }
 }
 
-export function checkAdminConnected(): RequestHandler {
+export function checkCookerAdminConnected(): RequestHandler {
     return async function(req: Request,
                           res,
                           next) {
@@ -31,7 +31,7 @@ export function checkAdminConnected(): RequestHandler {
             const user = await AuthService.getInstance().getUserFrom(token);
             if(user){
                 let role = await AuthService.getInstance().getRoleFrom(user._id);
-                if(role && role === "admin") {
+                if(role && (role === "cooker" || role === "admin")) {
                     req.user = user;
                     next();
                 } else {

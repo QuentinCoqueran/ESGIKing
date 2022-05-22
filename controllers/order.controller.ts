@@ -1,6 +1,7 @@
 import express, {Request, Response, Router} from "express";
 import {OrderService} from "../services";
-import {checkUserConnected} from "../middlewares";
+import {checkCookerAdminConnected, checkUserConnected} from "../middlewares";
+import {MenuModel, OrderModel} from "../models";
 
 export class OrderController {
 
@@ -9,6 +10,11 @@ export class OrderController {
         try {
             const ordered = await OrderService.getInstance().subscribeOrdered({
                 client: req.body.clientId,
+                address: req.body.address,
+                products: req.body.products,
+                menus: req.body.menus,
+                atRestaurant: req.body.atRestaurant,
+                restaurant: req.body.restaurant
             }, platform);
             res.json(ordered);
         } catch (err) {
@@ -33,7 +39,6 @@ export class OrderController {
 
     async setOrderData(req: Request, res: Response) {
         try {
-
             const ordered = await OrderService.getInstance().getOrdered(req.body?.clientId);
             res.json(ordered);
         } catch (err) {
@@ -79,10 +84,8 @@ export class OrderController {
     }
 
     async saveMessage(req: Request, res: Response) {
-        console.log(req.body)
         try {
             const messages = await OrderService.getInstance().saveMessage(req.body?.messageValue, req.body?.orderId, req.body?.role, req.body?.date);
-            console.log(messages)
             res.json(messages);
         } catch (err) {
             res.status(403).end();
@@ -91,11 +94,22 @@ export class OrderController {
     async getAllMessage(req: Request, res: Response) {
         try {
             const messages = await OrderService.getInstance().getAllMessage(req.body?.orderId);
-            console.log(messages)
             res.json(messages);
         } catch (err) {
             res.status(403).end();
         }
+    }
+
+    async getAllFromRestaurant(req: Request, res: Response){
+        const orders = await OrderModel.find({restaurant: req.params['id']});
+        console.log(orders);
+        res.json(orders);
+    }
+
+    async getOne(req: Request, res: Response){
+        const order = await OrderModel.findById(req.params['id']);
+        console.log(order);
+        res.json(order);
     }
 
     buildRoutes(): Router {
@@ -107,6 +121,8 @@ export class OrderController {
         router.post('/take-order', express.json(), this.updateTakeOrder.bind(this));
         router.post('/finish-order', express.json(), this.finishOrder.bind(this));
         router.post('/save-message', express.json(), this.saveMessage.bind(this));
+        router.get('/all/:id', checkCookerAdminConnected(), this.getAllFromRestaurant.bind(this));
+        router.get('/:id', express.json(), this.getOne.bind(this));
         router.post('/get-all-message', express.json(), this.getAllMessage.bind(this));
         return router;
     }
