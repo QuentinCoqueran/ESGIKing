@@ -31,11 +31,11 @@ const restaurantSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Offer'
     }],
-    admin: {
+    adminList: [{
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    }]
 },
     {
         collection: 'restaurants',
@@ -52,7 +52,7 @@ export interface RestaurantProps{
     menuList: string[] | MenuProps[],
     productList: string[] | ProductProps[],
     offerList: string[] | OfferProps[],
-    admin: string | UserProps
+    adminList: string[] | UserProps[]
 }
 
 export type RestaurantDocument = RestaurantProps & Document;

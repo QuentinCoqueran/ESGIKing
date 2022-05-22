@@ -10,12 +10,9 @@ export class AdminController {
     }
 
     async getAllOffer(req: Request, res: Response) {
-        try {
-            const offers = await OfferService.getInstance().getAllOffers();
-            res.json(offers);
-        } catch(err) {
-            res.status(400).end();
-        }
+
+        const offers = await OfferService.getInstance().getAllOffers();
+        res.json(offers);
     }
 
     async getOffer(req: Request, res: Response) {
@@ -41,7 +38,7 @@ export class AdminController {
             res.status(400).end();
         }else{
             let isExists = await OfferModel.findOne({name: req.body.name, restaurant: restaurant._id});
-            if(!isExists){
+            if(isExists){
                 res.status(409).end();
             }
         }
@@ -54,6 +51,7 @@ export class AdminController {
                     restaurant: req.body.restaurant
                 },req.body.menuList, req.body.productList);
                 if(offer) {
+                    res.status(201).end();
                     res.json(offer);
                 } else {
                     res.status(400).end();
@@ -67,6 +65,7 @@ export class AdminController {
                     restaurant: req.body.restaurant
                 }, req.body.menuList, undefined);
                 if(offer) {
+                    res.status(201).end();
                     res.json(offer);
                 } else {
                     res.status(400).end();
@@ -81,6 +80,7 @@ export class AdminController {
                 }, undefined, req.body.productList);
                 if(offer) {
                     res.json(offer);
+                    res.status(201).end();
                 } else {
                     res.status(400).end();
                 }
