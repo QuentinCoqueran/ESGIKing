@@ -6,6 +6,7 @@ import express from 'express';
 import {AuthController, ProductsController, OrderController, MenusController, BigbossController} from "./controllers";
 import mongoose, {Mongoose} from "mongoose";
 import http from "http";
+import {RestaurantController} from "./controllers/restaurant.controller";
 
 async function startServer(): Promise<void> {
 
@@ -38,8 +39,9 @@ async function startServer(): Promise<void> {
     const orderController = new OrderController();
     app.use('/ordered', orderController.buildRoutes());
     const menuController = new MenusController();
-  
     app.use('/menus', menuController.buildRoutes());
+    const restaurantController = new RestaurantController();
+    app.use('/restaurants', restaurantController.buildRoutes());
 
 
     io.on('connection', (socket: any) => {
