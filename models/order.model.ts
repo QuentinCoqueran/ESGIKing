@@ -68,6 +68,7 @@ const orderSchema = new Schema({
     },
     step: {
         type: Number,
+        // 0 commandé, 1 commande prête, 2 validé par le livreur, 3 validée par le client
         enum: [0, 1, 2, 3],
         default: 0
     },
