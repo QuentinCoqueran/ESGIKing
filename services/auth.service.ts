@@ -20,13 +20,13 @@ export class AuthService {
     }
 
     public async subscribeUser(user: Partial<UserProps>, info: Pick<RoleProps, 'role'>, platform: string): Promise<RoleDocument | null> {
-        if(info.role != "admin" && info.role != "bigboss" && info.role != "customer" && info.role != "cooker" && info.role != "deliveryman"){
+        if (info.role != "admin" && info.role != "bigboss" && info.role != "customer" && info.role != "cooker" && info.role != "deliveryman") {
             throw new Error("Role not found");
         }
         if (!user.password) {
             throw new Error('Missing password');
         }
-        if (info.role === "admin" || info.role === "cooker" || info.role === "bigboss"){
+        if (info.role === "admin" || info.role === "cooker" || info.role === "bigboss") {
             throw new Error('You cant create this account type');
         }
         const model = await UserModel.create({
@@ -95,7 +95,6 @@ export class AuthService {
                 _id: actualUser.role,
             });
             if (actualRole) {
-                console.log(actualRole.role)
                 return actualRole.role;
             }
         }

@@ -1,4 +1,4 @@
-import {MenuModel, ProductModel, ProductProps, RoleModel, UserModel, UserProps} from "../models";
+import {MenuModel, ProductModel, ProductProps, RestaurantModel, RoleModel, UserModel, UserProps} from "../models";
 
 import {OrderDocument, OrderModel, OrderProps} from "../models/order.model";
 import {OrderDisplay} from "../models/OrderDisplay";
@@ -67,52 +67,69 @@ export class OrderService {
         if (!ordered.client) {
             throw new Error('Missing data');
         }
-        let totalPrice: number = 0;
-        const deliverymans = await OrderService.getInstance().findDeliveryMan();
-        if(ordered.products){
-            for(let actual of ordered.products){
-                let productModel = await ProductModel.findOne({_id: actual.product })
-                if(productModel) {
+        let totalPrice: number | undefined = ordered.total;
+
+        if (ordered.products) {
+            for (let actual of ordered.products) {
+                let productModel = await ProductModel.findOne({_id: actual.product})
+                if (productModel) {
                     actual.product = productModel._id;
-                    totalPrice += productModel.price * actual.quantity;
-                }else {
+                } else {
                     throw new Error("Product not found");
                 }
             }
         }
-        if (ordered.menus){
-            for(let actual of ordered.menus){
-                let menuModel = await MenuModel.findOne({_id: actual.menu })
-                if(menuModel) {
+        if (ordered.menus) {
+            for (let actual of ordered.menus) {
+                let menuModel = await MenuModel.findOne({_id: actual.menu})
+                if (menuModel) {
                     actual.menu = menuModel._id;
-                    totalPrice += menuModel.price * actual.quantity;
-                }else {
+                } else {
                     throw new Error("Menu not found");
                 }
             }
         }
-        let result = await OrderService.getInstance().updateDeliverymanFromOrder(deliverymans, ordered.client);
-        if (result) {
-            if (!result.maj) {
-                 return await OrderModel.create({
-                     platform,
-                     client: ordered.client,
-                     deliveryMan: result.idDeliveryman,
-                     address: ordered.address,
-                     menus: ordered.menus,
-                     products: ordered.products,
-                     atRestaurant: ordered.atRestaurant,
-                     restaurant: ordered.restaurant,
-                     total: totalPrice
-                });
-            } else {
-                return null;
+
+
+
+        if (!ordered.atRestaurant && ordered.restaurant) {
+            let orderModel = this.shippingInProgress(String(ordered.client));
+            const deliverymans = await OrderService.getInstance().findDeliveryMan(ordered.restaurant);
+            let result = await OrderService.getInstance().updateDeliverymanFromOrder(deliverymans, ordered.client);
+            if (result && !orderModel) {
+                if (!result.maj) {
+                    return await OrderModel.create({
+                        platform,
+                        client: ordered.client,
+                        deliveryMan: result.idDeliveryman,
+                        address: ordered.address,
+                        menus: ordered.menus,
+                        products: ordered.products,
+                        atRestaurant: ordered.atRestaurant,
+                        restaurant: ordered.restaurant,
+                        total: totalPrice
+                    });
+                } else {
+                    return null;
+                }
             }
+        } else {
+            return await OrderModel.create({
+                platform,
+                client: ordered.client,
+                deliveryMan: null,
+                address: ordered.address,
+                menus: ordered.menus,
+                products: ordered.products,
+                atRestaurant: ordered.atRestaurant,
+                restaurant: ordered.restaurant,
+                total: totalPrice
+            });
         }
         return null;
     }
 
-    async findDeliveryMan() {
+    async findDeliveryMan(restaurant: string) {
         //get id deliveryman role in RoleModel
         const deliveryMan = await RoleModel.findOne({
             role: 'deliveryman'
@@ -123,11 +140,31 @@ export class OrderService {
             longitude: {$ne: 0},
             latitude: {$ne: 0}
         });
-        return await this.searchDeliveryman(users);
+        return await this.searchDeliveryman(users, restaurant);
     }
 
-    async searchDeliveryman(users: any) {
+    async shippingInProgress(ordered: string) {
+        //livraison en cours pour ce client
+        const orderModel = await OrderModel.find({
+            client: ordered,
+            atRestaurant: false,
+            deliveryMan: {$ne: null}
+        });
+        return orderModel;
+    }
+
+    async searchDeliveryman(users: any, restaurant: string) {
         let deliveryManArraySorted = [];
+        let longitudeRestaurant = 0;
+        let latitudeRestaurant = 0;
+        //longitude latitude du restaurant
+        const restaurantModel = await RestaurantModel.findOne({
+            _id: restaurant
+        });
+        if (restaurantModel) {
+            longitudeRestaurant = restaurantModel.longitude;
+            latitudeRestaurant = restaurantModel.latitude;
+        }
 
         //on boucle tous les livreurs
         for (let i = 0; i < users.length; i++) {
@@ -137,9 +174,8 @@ export class OrderService {
                 deliveryMan: users[i]._id,
                 $and: [{step: {$ne: 0}}, {step: {$ne: 3}}]
             });
-            if (orders.length == 0) {
-                let url = "https://wxs.ign.fr/calcul/geoportail/itineraire/rest/1.0.0/route?resource=bdtopo-osrm&start=" + users[i].longitude + "%2C" + users[i].latitude + "&end=2.367776%2C48.852891&profile=car&optimization=fastest&geometryFormat=polyline&getSteps=false&getBbox=false&distanceUnit=kilometer&timeUnit=minute";
-                // on lance notre requete get pour stocker la duration de chaque livreur
+            if (orders.length == 0 && longitudeRestaurant != 0 && latitudeRestaurant != 0) {
+                let url = "https://wxs.ign.fr/calcul/geoportail/itineraire/rest/1.0.0/route?resource=bdtopo-osrm&start=" + users[i].longitude + "%2C" + users[i].latitude + "&end=" + longitudeRestaurant + "%2C" + latitudeRestaurant + "&profile=car&optimization=fastest&geometryFormat=polyline&getSteps=false&getBbox=false&distanceUnit=kilometer&timeUnit=minute";                // on lance notre requete get pour stocker la duration de chaque livreur
                 const result = await httpGet(url)
                 if (typeof result === "string") {
                     let jsonObject = JSON.parse(result);
@@ -201,7 +237,7 @@ export class OrderService {
             client: clientId,
             $or: [{step: {$ne: 3}}, {deliveryMan: null}]
         });
-        console.log(order)
+
         if (order) {
             const clientActual = await UserModel.findOne({
                 _id: order.client,
@@ -218,6 +254,7 @@ export class OrderService {
                 orderDisplay.longitudeDeliveryman = deliverymanActual.longitude;
             }
             orderDisplay.address = order.address;
+            orderDisplay.total = order.total;
             orderDisplay.deliverymanId = order.deliveryMan;
             orderDisplay.step = order.step;
             orderDisplay.idOrder = order._id;
@@ -242,8 +279,10 @@ export class OrderService {
         const newOrder = await OrderModel.findOneAndUpdate(filter, update, {
             returnOriginal: false
         }).exec();
-        let deliverymans = await OrderService.getInstance().findDeliveryMan()
-        await OrderService.getInstance().updateDeliverymanFromOrder(deliverymans, idClient);
+        if (newOrder) {
+            let deliverymans = await OrderService.getInstance().findDeliveryMan(newOrder?.restaurant)
+            await OrderService.getInstance().updateDeliverymanFromOrder(deliverymans, idClient);
+        }
         return newOrder;
     }
 
@@ -252,12 +291,13 @@ export class OrderService {
         const update = {$push: {message: {valueMessage: messageValue, role: role, date: date}}};
         const newListMessage = await OrderModel.findOneAndUpdate(filter, update, {
             returnOriginal: false
-        }).exec();
+        });
         if (newListMessage) {
             return newListMessage.message;
         } else {
             throw new Error('No data message');
         }
+
     }
 
     async getAllMessage(orderId: string) {
