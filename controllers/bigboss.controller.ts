@@ -29,10 +29,10 @@ export class BigbossController{
                 const restaurant = await RestaurantService.getInstance().saveRestaurant({
                     name: req.body.name,
                     latitude: req.body.latitude,
-                    longitude: req.body.longitude,
-                    admin: req.body.admin
-                }, req.body.menuList, req.body.productList);
+                    longitude: req.body.longitude
+                }, req.body.adminList, req.body.menuList, req.body.productList);
                 res.json(restaurant);
+                res.status(201).end();
             }catch (err){
                 console.log(err);
                 res.status(400).end();

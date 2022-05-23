@@ -18,7 +18,7 @@ export class AuthController {
                 {
                     role: req.body.role
                 }, platform);
-            res.json(user);
+            res.status(201).json(user);
         } catch (err) {
             console.log(err)
             res.status(400).end();

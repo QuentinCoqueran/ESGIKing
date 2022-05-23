@@ -26,6 +26,9 @@ export class AuthService {
         if (!user.password) {
             throw new Error('Missing password');
         }
+        if (info.role === "admin" || info.role === "cooker" || info.role === "bigboss"){
+            throw new Error('You cant create this account type');
+        }
         const model = await UserModel.create({
             login: user.login,
             password: SecurityUtils.sha512(user.password),

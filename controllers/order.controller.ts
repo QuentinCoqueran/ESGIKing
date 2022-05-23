@@ -16,7 +16,7 @@ export class OrderController {
                 atRestaurant: req.body.atRestaurant,
                 restaurant: req.body.restaurant
             }, platform);
-            res.json(ordered);
+            res.status(201).json(ordered);
         } catch (err) {
             console.log(err)
             res.status(400).end();
@@ -88,7 +88,7 @@ export class OrderController {
             const messages = await OrderService.getInstance().saveMessage(req.body?.messageValue, req.body?.orderId, req.body?.role, req.body?.date);
             res.json(messages);
         } catch (err) {
-            res.status(403).end();
+            res.status(400).end();
         }
     }
 
@@ -97,7 +97,7 @@ export class OrderController {
             const messages = await OrderService.getInstance().getAllMessage(req.body?.orderId);
             res.json(messages);
         } catch (err) {
-            res.status(403).end();
+            res.status(400).end();
         }
     }
 

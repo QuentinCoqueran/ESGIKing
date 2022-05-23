@@ -20,7 +20,7 @@ export class ProductsController{
                     {
                         category: req.body.category,
                     }, platform);
-                res.json(product);
+                res.status(201).json(product);
             } catch (err) {
                 console.log(err);
                 res.status(400).end();
@@ -39,8 +39,14 @@ export class ProductsController{
 
     async getOne(req: Request, res: Response){
         const product = await ProductModel.findById(req.params['id']);
+        if(product){
+            res.json(product);
+
+        }else {
+            console.log("This product id doesn't exists")
+            res.sendStatus(404).end();
+        }
         console.log(product);
-        res.json(product);
     }
 
     async deleteOne(req: Request, res: Response){

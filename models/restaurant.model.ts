@@ -1,9 +1,8 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
-import {RoleProps} from "./role.model";
 import {MenuProps} from "./menu.model";
 import {ProductProps} from "./product.model";
 import {UserProps} from "./user.model";
-
+import {OfferProps} from "./offer.model";
 
 const restaurantSchema = new Schema({
     name: {
@@ -28,11 +27,15 @@ const restaurantSchema = new Schema({
         ref: 'Product',
         required: true
     }],
-    admin: {
+    offerList: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Offer'
+    }],
+    adminList: [{
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    }]
 },
     {
         collection: 'restaurants',
@@ -48,7 +51,8 @@ export interface RestaurantProps{
     longitude: number,
     menuList: string[] | MenuProps[],
     productList: string[] | ProductProps[],
-    admin: string | UserProps
+    offerList: string[] | OfferProps[],
+    adminList: string[] | UserProps[]
 }
 
 export type RestaurantDocument = RestaurantProps & Document;
