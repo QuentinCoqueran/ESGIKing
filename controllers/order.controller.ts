@@ -91,6 +91,7 @@ export class OrderController {
             res.status(403).end();
         }
     }
+
     async getAllMessage(req: Request, res: Response) {
         try {
             const messages = await OrderService.getInstance().getAllMessage(req.body?.orderId);
@@ -100,15 +101,14 @@ export class OrderController {
         }
     }
 
-    async getAllFromRestaurant(req: Request, res: Response){
+    async getAllFromRestaurant(req: Request, res: Response) {
         const orders = await OrderModel.find({restaurant: req.params['id']});
         console.log(orders);
         res.json(orders);
     }
 
-    async getOne(req: Request, res: Response){
+    async getOne(req: Request, res: Response) {
         const order = await OrderModel.findById(req.params['id']);
-        console.log(order);
         res.json(order);
     }
 

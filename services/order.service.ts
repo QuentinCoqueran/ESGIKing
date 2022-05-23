@@ -71,7 +71,7 @@ export class OrderService {
         const deliverymans = await OrderService.getInstance().findDeliveryMan();
         if(ordered.products){
             for(let actual of ordered.products){
-                let productModel = await ProductModel.findOne({name: actual.product })
+                let productModel = await ProductModel.findOne({_id: actual.product })
                 if(productModel) {
                     actual.product = productModel._id;
                     totalPrice += productModel.price * actual.quantity;
@@ -82,7 +82,7 @@ export class OrderService {
         }
         if (ordered.menus){
             for(let actual of ordered.menus){
-                let menuModel = await MenuModel.findOne({name: actual.menu })
+                let menuModel = await MenuModel.findOne({_id: actual.menu })
                 if(menuModel) {
                     actual.menu = menuModel._id;
                     totalPrice += menuModel.price * actual.quantity;
