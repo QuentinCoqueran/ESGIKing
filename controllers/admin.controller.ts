@@ -1,6 +1,6 @@
 import express, {Request, Response, Router} from "express";
 import {checkAdminConnected} from "../middlewares";
-import {OfferService} from "../services";
+import {AuthService, OfferService, RestaurantService} from "../services";
 import {OfferModel, RestaurantModel} from "../models";
 
 export class AdminController {
@@ -111,6 +111,41 @@ export class AdminController {
         }
     }
 
+    async updateRestaurant(req: Request, res: Response) {
+        const platform = req.headers["user-agent"] || "Unknown";
+        const authorization = req.headers["authorization"];
+        if(!authorization) {
+            res.status(401).end();
+        }else {
+            let parts = authorization.split(" ");
+            let token = parts[1];
+            let user = await AuthService.getInstance().getUserFrom(token);
+
+            if(!user) {
+                res.status(401).end();
+            }else {
+
+                let restaurantAdmin = await RestaurantModel.findOne({admin: user._id});
+
+                if (!restaurantAdmin) {
+                    res.status(401).end();
+                } else {
+
+                    try {
+                        const restaurant = await RestaurantService.getInstance().updateById(restaurantAdmin._id, req.body);
+                        if (restaurant) {
+                            res.json(restaurant);
+                        } else {
+                            res.status(404).end();
+                        }
+                    } catch (err) {
+                        res.status(400).end();
+                    }
+                }
+            }
+        }
+    }
+
     buildRoutes(): Router {
         const router = express.Router();
         router.get("/", checkAdminConnected(), this.admin.bind(this));
@@ -118,6 +153,7 @@ export class AdminController {
         router.get("/offer/:id", checkAdminConnected(), this.getOffer.bind(this));
         router.post("/addOffer", checkAdminConnected(), express.json(), this.addOffer.bind(this));
         router.delete("/deleteOffer/:id", checkAdminConnected(), this.deleteOffer.bind(this));
+        router.put("/updateRestaurant/", checkAdminConnected(), express.json(), this.updateRestaurant.bind(this));
         return router;
     }
 
