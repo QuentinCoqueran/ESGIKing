@@ -31,8 +31,8 @@ export class BigbossController{
                     latitude: req.body.latitude,
                     longitude: req.body.longitude
                 }, req.body.adminList, req.body.menuList, req.body.productList);
-                res.json(restaurant);
-                res.status(201).end();
+
+                res.status(201).json(restaurant);
             }catch (err){
                 console.log(err);
                 res.status(400).end();
@@ -111,6 +111,36 @@ export class BigbossController{
     }
 
 
+    async createAdmin(req: Request, res: Response){
+        const plateform = req.headers["user-agent"] || "Unknown";
+
+        try {
+            const admin = await AdminService.getInstance().createAdmin({
+                login: req.body.login,
+                password: req.body.password,
+                name: req.body.name,
+                lastname: req.body.lastname
+            });
+            if(admin){
+                res.status(201).json(admin);
+            }else {
+                res.status(400).end();
+            }
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
+    async getAllAdmins(req: Request, res: Response){
+        try {
+            const admin = await AdminService.getInstance().getAllAdmins();
+            res.json(admin);
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
+
     buildRoutes(): Router {
         const router = express.Router();
         router.get("/", checkBigbossConnected(), this.bigboss);
@@ -118,7 +148,9 @@ export class BigbossController{
         router.post('/addRestaurant', checkBigbossConnected(), express.json(), this.addRestaurant.bind(this));
         router.delete('/deleteRestaurant/:id', checkBigbossConnected(),this.deleteRestaurant.bind(this));
         router.put('/updateRestaurant/:id', checkBigbossConnected(), express.json(), this.updateRestaurant.bind(this));
+        router.post('/createAdmin', checkBigbossConnected(), express.json(), this.createAdmin.bind(this));
         router.put('/addAdmin/:id', checkBigbossConnected(), express.json(), this.addAdmin.bind(this));
+        router.get('/getAllAdmins', checkBigbossConnected(), this.getAllAdmins.bind(this));
         router.delete('/deleteAdmin/:id', checkBigbossConnected(), this.deleteAdmin.bind(this));
         return router;
     }

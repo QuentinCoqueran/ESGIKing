@@ -1,5 +1,6 @@
-import {RestaurantModel, RoleModel, UserModel} from "../models";
+import {RestaurantModel, RoleModel, UserDocument, UserModel, UserProps} from "../models";
 import {AuthService} from "./auth.service";
+import {SecurityUtils} from "../utils";
 
 export class AdminService {
 
@@ -55,4 +56,37 @@ export class AdminService {
 
     }
 
+    async createAdmin(user: Partial<UserProps>): Promise<UserDocument | null> {
+        let role = await RoleModel.findOne({role: "admin"});
+        if (role) {
+
+            if (!user.password) {
+                throw new Error('Missing password');
+            }
+
+            let newUser = await UserModel.create({
+                login: user.login,
+                password: SecurityUtils.sha512(user.password),
+                name: user.name,
+                lastname: user.lastname
+            });
+
+            newUser.role = role._id;
+
+
+            return await newUser.save();
+
+        } else {
+            throw new Error("Admin role not found");
+        }
+    }
+
+    async getAllAdmins() {
+        let role = await RoleModel.findOne({role: "admin"});
+        if (role) {
+            return UserModel.find({role: role._id});
+        } else {
+            throw new Error("Admin role not found");
+        }
+    }
 }
