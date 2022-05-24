@@ -91,9 +91,8 @@ export class OrderService {
         }
 
 
-
         if (!ordered.atRestaurant && ordered.restaurant) {
-            let orderModel = this.shippingInProgress(String(ordered.client));
+            let orderModel = await this.shippingInProgress(String(ordered.client));
             const deliverymans = await OrderService.getInstance().findDeliveryMan(ordered.restaurant);
             let result = await OrderService.getInstance().updateDeliverymanFromOrder(deliverymans, ordered.client);
             if (result && !orderModel) {
@@ -149,6 +148,11 @@ export class OrderService {
             client: ordered,
             atRestaurant: false,
             deliveryMan: {$ne: null}
+        }).then(order => {
+            console.log(order)
+            if (!order) {
+                return null;
+            }
         });
         return orderModel;
     }
@@ -263,7 +267,7 @@ export class OrderService {
     }
 
     public async updateStep(clientId: string | undefined, newStep: number | undefined): Promise<OrderDocument | null> {
-        const filter = {client: clientId, step: {$ne: 4}};
+        const filter = {client: clientId, step: {$ne: 3}};
         const update = {step: newStep};
         return OrderModel.findOneAndUpdate(filter, update, {
             returnOriginal: false
