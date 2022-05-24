@@ -114,6 +114,11 @@ export class BigbossController{
     async createAdmin(req: Request, res: Response){
         const plateform = req.headers["user-agent"] || "Unknown";
 
+        let isExists = await UserModel.findOne({login: req.body.login});
+        if(isExists){
+            res.status(409).end();
+        }
+
         try {
             const admin = await AdminService.getInstance().createAdmin({
                 login: req.body.login,
@@ -140,6 +145,31 @@ export class BigbossController{
         }
     }
 
+    async createCooker(req: Request, res: Response){
+        const plateform = req.headers["user-agent"] || "Unknown";
+
+        let isExists = await UserModel.findOne({login: req.body.login});
+        if(isExists){
+            res.status(409).end();
+        }
+
+        try {
+            const cooker = await AdminService.getInstance().createCooker({
+                login: req.body.login,
+                password: req.body.password,
+                name: req.body.name,
+                lastname: req.body.lastname
+            });
+            if(cooker){
+                res.status(201).json(cooker);
+            }else {
+                res.status(400).end();
+            }
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
 
     buildRoutes(): Router {
         const router = express.Router();
@@ -152,6 +182,7 @@ export class BigbossController{
         router.put('/addAdmin/:id', checkBigbossConnected(), express.json(), this.addAdmin.bind(this));
         router.get('/getAllAdmins', checkBigbossConnected(), this.getAllAdmins.bind(this));
         router.delete('/deleteAdmin/:id', checkBigbossConnected(), this.deleteAdmin.bind(this));
+        router.post('/createCooker', checkBigbossConnected(), express.json(), this.createCooker.bind(this));
         return router;
     }
 
