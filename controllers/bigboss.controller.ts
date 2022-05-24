@@ -140,6 +140,26 @@ export class BigbossController{
         }
     }
 
+    async createCooker(req: Request, res: Response){
+        const plateform = req.headers["user-agent"] || "Unknown";
+
+        try {
+            const cooker = await AdminService.getInstance().createCooker({
+                login: req.body.login,
+                password: req.body.password,
+                name: req.body.name,
+                lastname: req.body.lastname
+            });
+            if(cooker){
+                res.status(201).json(cooker);
+            }else {
+                res.status(400).end();
+            }
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
 
     buildRoutes(): Router {
         const router = express.Router();
@@ -152,6 +172,7 @@ export class BigbossController{
         router.put('/addAdmin/:id', checkBigbossConnected(), express.json(), this.addAdmin.bind(this));
         router.get('/getAllAdmins', checkBigbossConnected(), this.getAllAdmins.bind(this));
         router.delete('/deleteAdmin/:id', checkBigbossConnected(), this.deleteAdmin.bind(this));
+        router.post('/createCooker', checkBigbossConnected(), express.json(), this.createCooker.bind(this));
         return router;
     }
 

@@ -89,4 +89,27 @@ export class AdminService {
             throw new Error("Admin role not found");
         }
     }
+
+    async createCooker(user: Partial<UserProps>): Promise<UserDocument | null> {
+        let role = await RoleModel.findOne({role: "cooker"});
+        if (role) {
+
+            if (!user.password) {
+                throw new Error('Missing password');
+            }
+
+            let newUser = await UserModel.create({
+                login: user.login,
+                password: SecurityUtils.sha512(user.password),
+                name: user.name,
+                lastname: user.lastname
+            });
+
+            newUser.role = role._id;
+
+            return await newUser.save();
+        } else {
+            throw new Error("Cooker role not found");
+        }
+    }
 }
