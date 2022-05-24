@@ -51,8 +51,7 @@ export class AdminController {
                     restaurant: req.body.restaurant
                 },req.body.menuList, req.body.productList);
                 if(offer) {
-                    res.status(201).end();
-                    res.json(offer);
+                    res.status(201).json(offer);
                 } else {
                     res.status(400).end();
                 }
@@ -65,8 +64,7 @@ export class AdminController {
                     restaurant: req.body.restaurant
                 }, req.body.menuList, undefined);
                 if(offer) {
-                    res.status(201).end();
-                    res.json(offer);
+                    res.status(201).json(offer);
                 } else {
                     res.status(400).end();
                 }
@@ -79,8 +77,7 @@ export class AdminController {
                     restaurant: req.body.restaurant
                 }, undefined, req.body.productList);
                 if(offer) {
-                    res.json(offer);
-                    res.status(201).end();
+                    res.status(201).json(offer);
                 } else {
                     res.status(400).end();
                 }
