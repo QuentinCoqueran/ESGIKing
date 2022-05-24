@@ -114,6 +114,11 @@ export class BigbossController{
     async createAdmin(req: Request, res: Response){
         const plateform = req.headers["user-agent"] || "Unknown";
 
+        let isExists = await UserModel.findOne({login: req.body.login});
+        if(isExists){
+            res.status(409).end();
+        }
+
         try {
             const admin = await AdminService.getInstance().createAdmin({
                 login: req.body.login,
@@ -142,6 +147,11 @@ export class BigbossController{
 
     async createCooker(req: Request, res: Response){
         const plateform = req.headers["user-agent"] || "Unknown";
+
+        let isExists = await UserModel.findOne({login: req.body.login});
+        if(isExists){
+            res.status(409).end();
+        }
 
         try {
             const cooker = await AdminService.getInstance().createCooker({
