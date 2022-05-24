@@ -14,7 +14,8 @@ export class OrderController {
                 products: req.body.products,
                 menus: req.body.menus,
                 atRestaurant: req.body.atRestaurant,
-                restaurant: req.body.restaurant
+                restaurant: req.body.restaurant,
+                total : req.body.total
             }, platform);
             res.status(201).json(ordered);
         } catch (err) {
@@ -39,7 +40,7 @@ export class OrderController {
 
     async setOrderData(req: Request, res: Response) {
         try {
-            const ordered = await OrderService.getInstance().getOrdered(req.body?.clientId);
+            const ordered = await OrderService.getInstance().getOrdered(req.params['id']);
             res.json(ordered);
         } catch (err) {
             res.status(403).end();
@@ -91,24 +92,28 @@ export class OrderController {
             res.status(400).end();
         }
     }
+
     async getAllMessage(req: Request, res: Response) {
         try {
-            const messages = await OrderService.getInstance().getAllMessage(req.body?.orderId);
+            const messages = await OrderService.getInstance().getAllMessage(req.params['id']);
             res.json(messages);
         } catch (err) {
             res.status(400).end();
         }
     }
 
-    async getAllFromRestaurant(req: Request, res: Response){
-        const orders = await OrderModel.find({restaurant: req.params['id']});
-        console.log(orders);
+    async getShippingInProgress(req: Request, res: Response) {
+        const orders = await OrderService.getInstance().shippingInProgress(req.params['id']);
         res.json(orders);
     }
 
-    async getOne(req: Request, res: Response){
+    async getAllFromRestaurant(req: Request, res: Response) {
+        const orders = await OrderModel.find({restaurant: req.params['id']});
+        res.json(orders);
+    }
+
+    async getOne(req: Request, res: Response) {
         const order = await OrderModel.findById(req.params['id']);
-        console.log(order);
         res.json(order);
     }
 
@@ -117,13 +122,14 @@ export class OrderController {
         router.post('/create-ordered', express.json(), this.createOrder.bind(this));
         router.get('/client-id', checkUserConnected(), this.setClientIdFromDeliveryMan.bind(this));
         router.post('/update-post', express.json(), this.updatePostDeliveryMan.bind(this));
-        router.post('/data-ordered', express.json(), this.setOrderData.bind(this));
+        router.get('/data-ordered/:id', express.json(), this.setOrderData.bind(this));
         router.post('/take-order', express.json(), this.updateTakeOrder.bind(this));
         router.post('/finish-order', express.json(), this.finishOrder.bind(this));
         router.post('/save-message', express.json(), this.saveMessage.bind(this));
         router.get('/all/:id', checkCookerAdminConnected(), this.getAllFromRestaurant.bind(this));
+        router.get('/shipping-in-progress/:id',express.json(),this.getShippingInProgress.bind(this));
         router.get('/:id', express.json(), this.getOne.bind(this));
-        router.post('/get-all-message', express.json(), this.getAllMessage.bind(this));
+        router.get('/get-all-message/:id', express.json(), this.getAllMessage.bind(this));
         return router;
     }
 }

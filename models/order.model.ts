@@ -14,7 +14,7 @@ const orderSchema = new Schema({
     deliveryMan: {
         type: Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: false
     },
     address: {
         type: String,

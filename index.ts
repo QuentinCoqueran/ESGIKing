@@ -62,4 +62,5 @@ async function startServer(): Promise<void> {
     });
     httpServer.listen(port, () => console.log(`Listening on port ${port}`));
 }
+
 startServer().catch(console.error);

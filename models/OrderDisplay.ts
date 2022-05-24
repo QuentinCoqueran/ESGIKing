@@ -10,4 +10,5 @@ export class OrderDisplay {
     longitudeDeliveryman: string | undefined;
     latitudeDeliveryman: string | undefined;
     idOrder: OrderProps | undefined;
+    total: number | undefined;
 }

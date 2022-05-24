@@ -6,7 +6,6 @@ import {
     ProductModel,
     ProductProps,
     RestaurantModel,
-    RestaurantProps
 } from "../models";
 
 export class OfferService {
