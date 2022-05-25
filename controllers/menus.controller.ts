@@ -1,6 +1,7 @@
 import express, {Request, Response, Router} from "express";
 import {MenuModel, ProductModel, ProductProps} from "../models";
 import {MenuService, ProductService} from "../services";
+import {checkBigbossConnected} from "../middlewares";
 
 export class MenusController{
 
@@ -79,11 +80,11 @@ export class MenusController{
 
     buildRoutes(): Router {
         const router = express.Router();
-        router.post('/create', express.json(), this.createMenu.bind(this));
+        router.post('/create', checkBigbossConnected(), express.json(), this.createMenu.bind(this));
         router.get('/all', express.json(), this.getAll.bind(this));
         router.get('/:id', express.json(), this.getOne.bind(this));
-        router.delete('/delete/:id', this.deleteOne.bind(this));
-        router.put('/edit/:id', express.json(), this.editOne.bind(this));
+        router.delete('/delete/:id', checkBigbossConnected(),this.deleteOne.bind(this));
+        router.put('/edit/:id', checkBigbossConnected(), express.json(), this.editOne.bind(this));
         return router;
     }
 }
