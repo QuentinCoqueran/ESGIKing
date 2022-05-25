@@ -1,6 +1,6 @@
 import express, {Request, Response, Router} from "express";
 import {ProductModel} from "../models";
-import {checkUserConnected} from "../middlewares";
+import {checkAdminConnected, checkBigbossConnected, checkUserConnected} from "../middlewares";
 import {MenuService, ProductService} from "../services";
 
 export class ProductsController{
@@ -85,9 +85,9 @@ export class ProductsController{
         const router = express.Router();
         router.get('/all', express.json(), this.getAll.bind(this));
         router.get('/:id', express.json(), this.getOne.bind(this));
-        router.delete('/delete/:id', this.deleteOne.bind(this));
-        router.post('/create', express.json(), this.createProduct.bind(this));
-        router.put('/edit/:id', express.json(),this.editOne.bind(this));
+        router.delete('/delete/:id', checkBigbossConnected(), this.deleteOne.bind(this));
+        router.post('/create', checkBigbossConnected(), express.json(), this.createProduct.bind(this));
+        router.put('/edit/:id', checkBigbossConnected(), express.json(),this.editOne.bind(this));
         return router;
     }
 }
