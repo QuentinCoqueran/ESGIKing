@@ -71,7 +71,8 @@ export class OrderService {
 
         if (ordered.products) {
             for (let actual of ordered.products) {
-                let productModel = await ProductModel.findOne({_id: actual.product})
+                console.log(actual);
+                let productModel = await ProductModel.findOne({name: actual.product})
                 if (productModel) {
                     actual.product = productModel._id;
                 } else {
@@ -81,7 +82,7 @@ export class OrderService {
         }
         if (ordered.menus) {
             for (let actual of ordered.menus) {
-                let menuModel = await MenuModel.findOne({_id: actual.menu})
+                let menuModel = await MenuModel.findOne({name: actual.menu})
                 if (menuModel) {
                     actual.menu = menuModel._id;
                 } else {
