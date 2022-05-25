@@ -74,7 +74,7 @@ export class MenuService {
     }
 
     public async deleteById(toDelete: string): Promise<boolean> {
-        const menuToDelete = MenuModel.deleteOne({_id: toDelete});
+        const menuToDelete = MenuModel.deleteOne({_id: toDelete}).exec();
         return true;
     }
 }

@@ -84,7 +84,7 @@ export class ProductService {
     }
 
     public async deleteById(toDelete: string): Promise<boolean> {
-        const productToDelete = ProductModel.deleteOne({_id: toDelete});
+        const productToDelete = ProductModel.deleteOne({_id: toDelete}).exec();
         return true;
     }
 }
