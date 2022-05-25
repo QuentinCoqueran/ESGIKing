@@ -46,8 +46,7 @@ export class MenusController{
         const isExists = await MenuModel.exists({ _id: req.params.id });
         if(isExists) {
             try{
-                const todelete = await ProductService.getInstance().deleteById(req.params.id)
-                console.log("test");
+                const todelete = await MenuService.getInstance().deleteById(req.params.id);
                 res.status(204).end();
             }catch(err){
                 console.log(err);
